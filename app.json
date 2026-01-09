@@ -1,0 +1,30 @@
+{
+    "expo": {
+        "name": "Student Recruitment",
+        "slug": "student-recruitment-mobile",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "userInterfaceStyle": "light",
+        "icon": "./assets/logo.jpeg",
+        "splash": {
+            "image": "./assets/logo.jpeg",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": [
+            "**/*"
+        ],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.studentrecruitment.mobile"
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/logo.jpeg",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.studentrecruitment.mobile"
+        },
+        "web": {}
+    }
+}

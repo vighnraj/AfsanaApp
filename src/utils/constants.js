@@ -1,0 +1,260 @@
+// App Constants - Static data lists matching web frontend
+
+// Countries list
+export const COUNTRIES = [
+    'Hungary',
+    'UK',
+    'Cyprus',
+    'Canada',
+    'Malaysia',
+    'Lithuania',
+    'Latvia',
+    'Germany',
+    'New Zealand',
+    'USA',
+    'Estonia',
+    'Australia',
+    'South Korea',
+    'Georgia',
+    'Denmark',
+    'Netherlands',
+    'Sweden',
+    'Norway',
+    'Belgium',
+    'Romania',
+    'Russia',
+    'Turkey',
+    'Ireland',
+    'Portugal',
+    'Malta',
+    'Others',
+];
+
+// Inquiry/Lead Status options (matches frontend)
+export const STATUS_OPTIONS = [
+    { value: 'New', label: 'New', color: '#3b82f6' },
+    { value: 'New Lead', label: 'New Lead', color: '#6366f1' },
+    { value: 'In Review', label: 'In Review', color: '#f59e0b' },
+    { value: 'Converted to lead', label: 'Converted to Lead', color: '#8b5cf6' },
+    { value: 'Not Interested', label: 'Not Interested', color: '#ef4444' },
+    { value: 'Next Intake Interested', label: 'Next Intake Interested', color: '#a855f7' },
+    { value: 'Registered', label: 'Registered', color: '#7c3aed' },
+    { value: 'Converted to student', label: 'Converted to Student', color: '#10b981' },
+    { value: 'Dropped', label: 'Dropped', color: '#dc2626' },
+];
+
+// Intake options
+export const INTAKE_OPTIONS = [
+    { value: 'February', label: 'February' },
+    { value: 'September', label: 'September' },
+    { value: 'Other', label: 'Other' },
+];
+
+// Lead Source options
+export const LEAD_SOURCE_OPTIONS = [
+    'Whatsapp',
+    'Facebook',
+    'YouTube',
+    'Website',
+    'Referral',
+    'Event',
+    'Agent',
+    'Office Visit',
+    'Hotline',
+    'Seminar',
+    'Expo',
+    'Other',
+];
+
+// Visa processing stages
+export const VISA_STAGES = [
+    { key: 'application', label: 'Registration', icon: 'person', apiField: 'registration_visa_processing_stage' },
+    { key: 'interview', label: 'Documents', icon: 'document-text', apiField: 'documents_visa_processing_stage' },
+    { key: 'visa', label: 'University Application', icon: 'business', apiField: 'university_application_visa_processing_stage' },
+    { key: 'fee', label: 'Fee Payment', icon: 'card', apiField: 'fee_payment_visa_processing_stage' },
+    { key: 'zoom', label: 'Interview', icon: 'videocam', apiField: 'university_interview_visa_processing_stage' },
+    { key: 'conditionalOffer', label: 'Offer Letter', icon: 'document', apiField: 'offer_letter_visa_processing_stage' },
+    { key: 'tuitionFee', label: 'Tuition Fee', icon: 'cash', apiField: 'tuition_fee_visa_processing_stage' },
+    { key: 'mainofferletter', label: 'Final Offer', icon: 'checkmark-done', apiField: 'final_offer_visa_processing_stage' },
+    { key: 'embassydocument', label: 'Embassy Docs', icon: 'folder', apiField: 'embassy_docs_visa_processing_stage' },
+    { key: 'embassyappoint', label: 'Appointment', icon: 'calendar', apiField: 'appointment_visa_processing_stage' },
+    { key: 'embassyinterview', label: 'Interview', icon: 'mic', apiField: 'visa_approval_visa_processing_stage' },
+    { key: 'visaStatus', label: 'Visa Status', icon: 'airplane', apiField: 'visa_rejection_visa_processing_stage' },
+];
+
+// User roles
+export const USER_ROLES = [
+    { value: 'admin', label: 'Admin' },
+    { value: 'student', label: 'Student' },
+    { value: 'counselor', label: 'Counselor' },
+    { value: 'staff', label: 'Staff' },
+    { value: 'processors', label: 'Processor' },
+    { value: 'masteradmin', label: 'Master Admin' },
+];
+
+// Dashboard navigation by role
+export const ROLE_DASHBOARD = {
+    admin: 'AdminDashboard',
+    student: 'StudentDashboard',
+    counselor: 'CounselorDashboard',
+    staff: 'StaffDashboard',
+    processors: 'ProcessorDashboard',
+    masteradmin: 'MasterAdminDashboard',
+};
+
+// Date range filter options
+export const DATE_RANGE_OPTIONS = [
+    { value: '', label: 'All Time' },
+    { value: 'Today', label: 'Today' },
+    { value: 'ThisWeek', label: 'This Week' },
+    { value: 'ThisMonth', label: 'This Month' },
+    { value: 'ThisYear', label: 'This Year' },
+];
+
+// Priority options (web parity)
+export const PRIORITY_OPTIONS = [
+    'Low',
+    'Medium',
+    'High',
+];
+
+// Lead / Inquiry type options
+export const LEAD_TYPE_OPTIONS = [
+    'student_visa',
+    'visit_visa',
+    'work_visa',
+    'short_visa',
+    'german_course',
+    'english_course',
+    'others',
+];
+
+export const INQUIRY_TYPE_OPTIONS = LEAD_TYPE_OPTIONS;
+
+// Education levels
+export const EDUCATION_LEVEL_OPTIONS = [
+    { value: 'ssc', label: 'SSC' },
+    { value: 'hsc', label: 'HSC' },
+    { value: 'bachelor', label: 'Bachelor' },
+    { value: 'master', label: 'Master' },
+];
+
+// Test types
+export const TEST_TYPE_OPTIONS = [
+    { value: 'ielts', label: 'IELTS' },
+    { value: 'toefl', label: 'TOEFL' },
+    { value: 'duolingo', label: 'Duolingo' },
+    { value: 'no_test', label: 'No Test Yet' },
+];
+
+// Branch options
+export const BRANCH_OPTIONS = [
+    'Dhaka',
+    'Sylhet',
+];
+
+// Follow-up preset options
+export const FOLLOW_UP_PRESETS = [
+    'today',
+    'yesterday',
+    'nextWeek',
+    'thisWeek',
+    'overdue',
+];
+
+// Sort options
+export const SORT_OPTIONS = [
+    { value: 'newToOld', label: 'Newest First' },
+    { value: 'oldToNew', label: 'Oldest First' },
+    { value: 'aToZ', label: 'Name A → Z' },
+    { value: 'zToA', label: 'Name Z → A' },
+];
+
+// Document types for upload
+export const DOCUMENT_TYPES = [
+    { key: 'passport_doc', label: 'Passport' },
+    { key: 'photo_doc', label: 'Photo' },
+    { key: 'ssc_doc', label: 'SSC Certificate' },
+    { key: 'hsc_doc', label: 'HSC Transcript' },
+    { key: 'bachelor_doc', label: "Bachelor's Certificate" },
+    { key: 'ielts_doc', label: 'IELTS/English Certificate' },
+    { key: 'cv_doc', label: 'CV' },
+    { key: 'sop_doc', label: 'SOP' },
+    { key: 'medical_doc', label: 'Medical Certificate' },
+    { key: 'other_doc', label: 'Other Documents' },
+];
+
+// API error messages
+export const ERROR_MESSAGES = {
+    NETWORK_ERROR: 'Network error. Please check your connection.',
+    AUTH_ERROR: 'Authentication failed. Please login again.',
+    PERMISSION_ERROR: 'You do not have permission to perform this action.',
+    VALIDATION_ERROR: 'Please check the form for errors.',
+    SERVER_ERROR: 'Server error. Please try again later.',
+    UNKNOWN_ERROR: 'An unexpected error occurred.',
+};
+
+// Session timeout in milliseconds (10 minutes)
+export const SESSION_TIMEOUT = 10 * 60 * 1000;
+
+// Follow-up types
+export const FOLLOW_UP_TYPES = [
+    { value: 'Call', label: 'Call' },
+    { value: 'Email', label: 'Email' },
+    { value: 'WhatsApp', label: 'WhatsApp' },
+    { value: 'Office Visit', label: 'Office Visit' },
+    { value: 'Seminar', label: 'Seminar' },
+    { value: 'Other', label: 'Other' },
+];
+
+// Follow-up statuses
+export const FOLLOW_UP_STATUSES = [
+    { value: 'Follow-Up Scheduled', label: 'Scheduled' },
+    { value: 'Awaiting Response', label: 'Awaiting Response' },
+    { value: 'Interested', label: 'Interested' },
+    { value: 'Not Interested', label: 'Not Interested' },
+    { value: 'Converted to Client', label: 'Converted to Client' },
+];
+
+// Note types
+export const NOTE_TYPES = [
+    { value: 'Follow-up', label: 'Follow-up' },
+    { value: 'Meeting', label: 'Meeting' },
+    { value: 'Call', label: 'Call' },
+    { value: 'Email', label: 'Email' },
+    { value: 'Feedback', label: 'Feedback' },
+    { value: 'Other', label: 'Other' },
+];
+
+// Pagination defaults
+export const PAGINATION = {
+    DEFAULT_PAGE: 1,
+    DEFAULT_LIMIT: 10,
+    MAX_LIMIT: 50,
+};
+
+export default {
+    COUNTRIES,
+    STATUS_OPTIONS,
+    INTAKE_OPTIONS,
+    LEAD_SOURCE_OPTIONS,
+    VISA_STAGES,
+    USER_ROLES,
+    ROLE_DASHBOARD,
+    DATE_RANGE_OPTIONS,
+    PRIORITY_OPTIONS,
+    LEAD_TYPE_OPTIONS,
+    INQUIRY_TYPE_OPTIONS,
+    EDUCATION_LEVEL_OPTIONS,
+    TEST_TYPE_OPTIONS,
+    BRANCH_OPTIONS,
+    FOLLOW_UP_PRESETS,
+    SORT_OPTIONS,
+    DOCUMENT_TYPES,
+    FOLLOW_UP_TYPES,
+    FOLLOW_UP_STATUSES,
+    NOTE_TYPES,
+    ERROR_MESSAGES,
+    SESSION_TIMEOUT,
+    PAGINATION,
+};
