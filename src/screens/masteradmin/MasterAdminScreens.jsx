@@ -9,9 +9,9 @@ import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context
 import Card from '../../components/common/Card';
 import { LoadingSpinner } from '../../components/common/Loading';
 import { getInitials } from '../../utils/formatting';
-import { CustomHeader } from '../../components/common';
 
 import { getMasterAdminDashboard } from '../../api/dashboardApi';
+import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
 
 export const DashboardScreen = ({ navigation }) => {
     const { user } = useAuth();
@@ -43,10 +43,9 @@ export const DashboardScreen = ({ navigation }) => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <View style={styles.safeArea}>
-            <CustomHeader title="Master Dashboard" showBack={false} />
+        <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
             <ScrollView
-                contentContainerStyle={styles.content}
+                contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                 <View style={styles.header}>
@@ -89,7 +88,7 @@ export const DashboardScreen = ({ navigation }) => {
                     <Ionicons name="chevron-forward" size={24} color={colors.gray400} />
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -116,16 +115,15 @@ export const AdminTableScreen = () => {
         </View>
     );
 
-    if (loading) return <View style={styles.safeArea}><CustomHeader title="Staff Admins" /><LoadingSpinner /></View>;
+    if (loading) return <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}><LoadingSpinner /></SafeAreaView>;
 
     return (
-        <View style={styles.safeArea}>
-            <CustomHeader title="Staff Admins" />
-            <FlatList data={admins} keyExtractor={(item) => item.id?.toString()} renderItem={renderAdmin} contentContainerStyle={styles.listContent} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
+            <FlatList data={admins} keyExtractor={(item) => item.id?.toString()} renderItem={renderAdmin} contentContainerStyle={[styles.listContent, { paddingBottom: BOTTOM_TAB_SPACING }]} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 ListEmptyComponent={<View style={styles.empty}><Ionicons name="people-outline" size={64} color={colors.gray300} /><Text style={styles.emptyText}>No admins found</Text></View>}
             />
-            <TouchableOpacity style={[styles.fab, shadows.lg]}><Ionicons name="add" size={28} color={colors.white} /></TouchableOpacity>
-        </View>
+            <TouchableOpacity style={[styles.fab, shadows.lg, { bottom: BOTTOM_TAB_HEIGHT + 20 }]}><Ionicons name="add" size={28} color={colors.white} /></TouchableOpacity>
+        </SafeAreaView>
     );
 };
 
@@ -133,9 +131,8 @@ export const MoreScreen = ({ navigation }) => {
     const { user, logout } = useAuth();
     const handleLogout = () => Alert.alert('Logout', 'Are you sure you want to log out?', [{ text: 'Cancel' }, { text: 'Logout', style: 'destructive', onPress: async () => { await logout(); showToast.success('Logged Out'); } }]);
     return (
-        <View style={styles.safeArea}>
-            <CustomHeader title="More" showBack={false} />
-            <ScrollView contentContainerStyle={styles.pad}>
+        <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
+            <ScrollView contentContainerStyle={[styles.pad, { paddingBottom: BOTTOM_TAB_SPACING }]}>
                 <View style={[styles.userCard, shadows.md]}>
                     <View style={styles.userAvatar}>
                         <Ionicons name="person" size={28} color={colors.white} />
@@ -166,7 +163,7 @@ export const MoreScreen = ({ navigation }) => {
                     <Text style={styles.logoutText}>Logout</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 

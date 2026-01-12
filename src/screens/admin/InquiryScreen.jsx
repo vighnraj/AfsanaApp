@@ -20,6 +20,7 @@ import { getInquiries, updateInquiry, assignInquiry, deleteInquiry } from '../..
 import { getCounselors, getStaffById } from '../../api/userApi';
 import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 import DateRangePicker from '../../components/common/DateRangePicker';
 import FilterDropdown from '../../components/common/FilterDropdown';
 import LeadDetailModal from '../../components/lead/LeadDetailModal';
@@ -545,7 +546,7 @@ const InquiryScreen = ({ navigation }) => {
                             <FilterDropdown
                                 label="Status"
                                 value={tempFilters.status}
-                                options={STATUS_CONST}
+                                options={STATUS_OPTIONS}
                                 onChange={(v) => setTempFilters({ ...tempFilters, status: v })}
                                 placeholder="All"
                             />
@@ -756,6 +757,7 @@ const styles = StyleSheet.create({
     listContent: {
         padding: spacing.md,
         paddingTop: 0,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     inquiryCard: {
         backgroundColor: colors.white,

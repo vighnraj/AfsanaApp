@@ -14,12 +14,9 @@ import StudentsScreen from '../screens/counselor/StudentsScreen';
 import TasksScreen from '../screens/counselor/TasksScreen';
 import MoreScreen from '../screens/counselor/MoreScreen';
 import PaymentsScreen from '../screens/counselor/PaymentsScreen';
-import ChatScreen from '../screens/common/ChatScreen';
-import ChatListScreen from '../screens/common/ChatListScreen';
 import ProfileScreen from '../screens/common/ProfileScreen';
 import VisaListScreen from '../screens/admin/VisaListScreen';
 import VisaProcessingScreen from '../screens/student/VisaProcessingScreen';
-import NotificationCenterScreen from '../screens/notification/NotificationCenterScreen';
 
 import { colors, fontSizes } from '../context/ThemeContext';
 import { getTabScreenOptions } from './navigationStyles';
@@ -47,10 +44,7 @@ const MoreStack = () => (
         <Stack.Screen name="VisaList" component={VisaListScreen} options={{ title: 'Visa Processing' }} />
         <Stack.Screen name="VisaProcessing" component={VisaProcessingScreen} options={{ title: 'Process Application' }} />
 
-        <Stack.Screen name="ChatList" component={ChatListScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
-        <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
 );
 

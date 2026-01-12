@@ -10,9 +10,6 @@ import { DashboardScreen, InquiryScreen, LeadScreen, MoreScreen } from '../scree
 import ProfileScreen from '../screens/common/ProfileScreen';
 import VisaListScreen from '../screens/admin/VisaListScreen';
 import VisaProcessingScreen from '../screens/student/VisaProcessingScreen';
-import NotificationCenterScreen from '../screens/notification/NotificationCenterScreen';
-import ChatListScreen from '../screens/common/ChatListScreen';
-import ChatScreen from '../screens/common/ChatScreen';
 
 import { colors, fontSizes } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -40,10 +37,7 @@ const MoreStack = () => (
         <Stack.Screen name="MoreMenu" component={MoreScreen} options={{ headerShown: false }} />
         <Stack.Screen name="VisaList" component={VisaListScreen} options={{ title: 'Visa Processing' }} />
         <Stack.Screen name="VisaProcessing" component={VisaProcessingScreen} options={{ title: 'Process Application' }} />
-        <Stack.Screen name="ChatList" component={ChatListScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
-        <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
 );
 

@@ -59,6 +59,7 @@ import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import CustomHeader from '../../components/common/CustomHeader';
 import NotificationBell from '../../components/common/NotificationBell';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -161,7 +162,7 @@ const DashboardScreen = ({ navigation }) => {
             <CustomHeader title="Admin Dashboard" showBack={false} rightAction={<NotificationBell />} />
             <ScrollView
                 style={styles.container}
-                contentContainerStyle={styles.content}
+                contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}
                 showsVerticalScrollIndicator={false}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >

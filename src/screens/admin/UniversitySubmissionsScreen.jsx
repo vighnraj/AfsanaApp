@@ -17,6 +17,7 @@ import { Picker } from '@react-native-picker/picker';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import CustomHeader from '../../components/common/CustomHeader';
 import { showToast } from '../../components/common/Toast';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const UniversitySubmissionsScreen = ({ navigation }) => {
     const [submissions, setSubmissions] = useState([]);
@@ -312,6 +313,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     card: {
         backgroundColor: colors.white,

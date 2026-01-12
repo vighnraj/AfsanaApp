@@ -257,4 +257,6 @@ export default {
     ERROR_MESSAGES,
     SESSION_TIMEOUT,
     PAGINATION,
+    BOTTOM_TAB_SPACING: 120, // Height of tab bar + extra padding
+    BOTTOM_TAB_HEIGHT: 105,  // Max height of tab bar
 };

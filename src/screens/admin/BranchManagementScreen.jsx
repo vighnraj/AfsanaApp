@@ -21,6 +21,7 @@ import {
     getAllBranches,
     deleteBranch,
 } from '../../api/branchApi';
+import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
 
 const BranchManagementScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
@@ -151,6 +152,7 @@ const BranchManagementScreen = ({ navigation }) => {
             ) : (
                 <ScrollView
                     style={styles.content}
+                    contentContainerStyle={{ paddingBottom: BOTTOM_TAB_SPACING }}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
@@ -173,7 +175,7 @@ const BranchManagementScreen = ({ navigation }) => {
 
             {/* Add Branch FAB */}
             <TouchableOpacity
-                style={[styles.fab, shadows.lg]}
+                style={[styles.fab, shadows.lg, { bottom: BOTTOM_TAB_HEIGHT + 20 }]}
                 onPress={handleAddBranch}
             >
                 <Ionicons name="add" size={30} color={colors.white} />

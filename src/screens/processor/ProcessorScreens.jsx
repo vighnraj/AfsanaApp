@@ -1,5 +1,6 @@
 // Processor Screens - Enhanced with Pipeline Charts
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     View,
     Text,
@@ -17,9 +18,9 @@ import { useAuth } from '../../context/AuthContext';
 import { getProcessorDashboard } from '../../api/dashboardApi';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { showToast } from '../../components/common/Toast';
-import { CustomHeader } from '../../components/common';
 import Card from '../../components/common/Card';
 import { LoadingSpinner } from '../../components/common/Loading';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 // Import target screens directly for named exports
 import VisaListScreen from '../admin/VisaListScreen';
@@ -69,11 +70,10 @@ export const DashboardScreen = ({ navigation }) => {
     if (loading) return <LoadingSpinner />;
 
     return (
-        <View style={styles.container}>
-            <CustomHeader title="Workplace" showBack={false} />
+        <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
             <ScrollView
                 style={styles.container}
-                contentContainerStyle={styles.pad}
+                contentContainerStyle={[styles.pad, { paddingBottom: BOTTOM_TAB_SPACING }]}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                 <View style={styles.userBanner}>
@@ -149,7 +149,7 @@ export const DashboardScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -171,9 +171,8 @@ export const MoreScreen = ({ navigation }) => {
     ]);
 
     return (
-        <View style={styles.container}>
-            <CustomHeader title="Settings" showBack={false} />
-            <ScrollView contentContainerStyle={styles.pad}>
+        <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
+            <ScrollView contentContainerStyle={[styles.pad, { paddingBottom: BOTTOM_TAB_SPACING }]}>
                 <View style={[styles.userCard, shadows.md]}>
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>{user?.full_name?.charAt(0)}</Text>
@@ -210,7 +209,7 @@ export const MoreScreen = ({ navigation }) => {
                     <Text style={styles.logoutTextAlt}>Logout</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 

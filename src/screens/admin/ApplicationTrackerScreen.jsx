@@ -21,6 +21,7 @@ import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { CustomHeader } from '../../components/common';
 import { showToast } from '../../components/common/Toast';
+import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
 import {
     getAllApplications,
     deleteApplication,
@@ -29,8 +30,13 @@ import {
     getAllProcessors,
     assignCounselorToApplication,
     assignProcessorToApplication,
+    getAllStudents,
+    getAllUniversities,
+    createApplication,
+    updateApplication,
 } from '../../api/applicationApi';
 import DatePickerModal from '../../components/common/DatePickerModal';
+import * as DocumentPicker from 'expo-document-picker';
 
 const ApplicationTrackerScreen = ({ navigation }) => {
     const { user } = useAuth();
@@ -40,6 +46,8 @@ const ApplicationTrackerScreen = ({ navigation }) => {
     const [filteredApplications, setFilteredApplications] = useState([]);
     const [counselors, setCounselors] = useState([]);
     const [processors, setProcessors] = useState([]);
+    const [students, setStudents] = useState([]);
+    const [universities, setUniversities] = useState([]);
 
     // Filter states
     const [showFilterModal, setShowFilterModal] = useState(false);
@@ -58,6 +66,19 @@ const ApplicationTrackerScreen = ({ navigation }) => {
     const [notes, setNotes] = useState('');
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
+
+    // Create/Edit Application Modal
+    const [showApplicationModal, setShowApplicationModal] = useState(false);
+    const [editingApplication, setEditingApplication] = useState(null);
+    const [formData, setFormData] = useState({
+        student_id: '',
+        university_id: '',
+        program_name: '',
+        application_date: '',
+        decision_status: '',
+    });
+    const [offerLetterFile, setOfferLetterFile] = useState(null);
+    const [showAppDatePicker, setShowAppDatePicker] = useState(false);
 
     // Fetch applications
     const fetchApplications = useCallback(async () => {
@@ -94,11 +115,33 @@ const ApplicationTrackerScreen = ({ navigation }) => {
         }
     }, []);
 
+    // Fetch students
+    const fetchStudents = useCallback(async () => {
+        try {
+            const data = await getAllStudents();
+            setStudents(data);
+        } catch (error) {
+            console.error('Fetch students error:', error);
+        }
+    }, []);
+
+    // Fetch universities
+    const fetchUniversities = useCallback(async () => {
+        try {
+            const data = await getAllUniversities();
+            setUniversities(data);
+        } catch (error) {
+            console.error('Fetch universities error:', error);
+        }
+    }, []);
+
     useEffect(() => {
         fetchApplications();
         fetchCounselors();
         fetchProcessors();
-    }, [fetchApplications, fetchCounselors, fetchProcessors]);
+        fetchStudents();
+        fetchUniversities();
+    }, [fetchApplications, fetchCounselors, fetchProcessors, fetchStudents, fetchUniversities]);
 
     // Apply filters
     useEffect(() => {
@@ -168,6 +211,103 @@ const ApplicationTrackerScreen = ({ navigation }) => {
         } catch (error) {
             console.error('Delete application error:', error);
             showToast.error('Error', 'Failed to delete application');
+        }
+    };
+
+    // Open Create Application Modal
+    const openCreateApplicationModal = () => {
+        setEditingApplication(null);
+        setFormData({
+            student_id: '',
+            university_id: '',
+            program_name: '',
+            application_date: '',
+            decision_status: '',
+        });
+        setOfferLetterFile(null);
+        setShowApplicationModal(true);
+    };
+
+    // Open Edit Application Modal
+    const openEditApplicationModal = (app) => {
+        setEditingApplication(app);
+        setFormData({
+            student_id: app.student_id?.toString() || '',
+            university_id: app.university_id?.toString() || '',
+            program_name: app.program_name || '',
+            application_date: app.application_date || '',
+            decision_status: app.decision_status || '',
+        });
+        setOfferLetterFile(null);
+        setShowApplicationModal(true);
+    };
+
+    // Handle file picker
+    const handlePickDocument = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf', 'image/*'],
+                copyToCacheDirectory: true,
+            });
+
+            if (result.canceled === false && result.assets && result.assets.length > 0) {
+                setOfferLetterFile(result.assets[0]);
+                showToast.success('Success', 'File selected');
+            }
+        } catch (error) {
+            console.error('Document picker error:', error);
+            showToast.error('Error', 'Failed to pick file');
+        }
+    };
+
+    // Handle form field change
+    const handleFormChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // Handle Submit Application
+    const handleSubmitApplication = async () => {
+        // Validation
+        if (!formData.student_id || !formData.university_id || !formData.program_name) {
+            showToast.error('Validation', 'Please fill all required fields');
+            return;
+        }
+
+        setModalLoading(true);
+        try {
+            const submitData = new FormData();
+            submitData.append('student_id', formData.student_id);
+            submitData.append('university_id', formData.university_id);
+            submitData.append('program_name', formData.program_name);
+            submitData.append('application_date', formData.application_date || new Date().toISOString().split('T')[0]);
+            submitData.append('decision_status', formData.decision_status || 'Pending');
+
+            // Add file if selected
+            if (offerLetterFile) {
+                submitData.append('offer_letter', {
+                    uri: offerLetterFile.uri,
+                    type: offerLetterFile.mimeType || 'application/pdf',
+                    name: offerLetterFile.name || 'offer_letter.pdf',
+                });
+            }
+
+            if (editingApplication) {
+                // Update existing application
+                await updateApplication(editingApplication.id, submitData);
+                showToast.success('Success', 'Application updated successfully');
+            } else {
+                // Create new application
+                await createApplication(submitData);
+                showToast.success('Success', 'Application created successfully');
+            }
+
+            setShowApplicationModal(false);
+            fetchApplications();
+        } catch (error) {
+            console.error('Submit application error:', error);
+            showToast.error('Error', error.response?.data?.message || 'Failed to save application');
+        } finally {
+            setModalLoading(false);
         }
     };
 
@@ -280,9 +420,14 @@ const ApplicationTrackerScreen = ({ navigation }) => {
                         <Text style={styles.cardIndex}>#{index + 1}</Text>
                         <Text style={styles.cardTitle}>{item.student_name}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => handleDeleteApplication(item.id)}>
-                        <Ionicons name="trash-outline" size={20} color={colors.error} />
-                    </TouchableOpacity>
+                    <View style={styles.cardActions}>
+                        <TouchableOpacity onPress={() => openEditApplicationModal(item)} style={{ marginRight: spacing.sm }}>
+                            <Ionicons name="create-outline" size={20} color={colors.primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleDeleteApplication(item.id)}>
+                            <Ionicons name="trash-outline" size={20} color={colors.error} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* University */}
@@ -654,6 +799,144 @@ const ApplicationTrackerScreen = ({ navigation }) => {
                 selectedDate={followUpDate}
                 title="Select Follow-up Date"
             />
+
+            {/* Create/Edit Application Modal */}
+            <Modal visible={showApplicationModal} animationType="slide" transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalContainer, shadows.lg]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                                {editingApplication ? 'Edit Application' : 'Create Application'}
+                            </Text>
+                            <TouchableOpacity onPress={() => setShowApplicationModal(false)}>
+                                <Ionicons name="close" size={24} color={colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView style={styles.modalContent}>
+                            {/* Student Selection */}
+                            <Text style={styles.filterLabel}>Student *</Text>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={formData.student_id}
+                                    onValueChange={(value) => handleFormChange('student_id', value)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="-- Select Student --" value="" />
+                                    {students.map((student) => (
+                                        <Picker.Item
+                                            key={student.id}
+                                            label={student.full_name || student.name || student.email}
+                                            value={student.id.toString()}
+                                        />
+                                    ))}
+                                </Picker>
+                            </View>
+
+                            {/* University Selection */}
+                            <Text style={styles.filterLabel}>University *</Text>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={formData.university_id}
+                                    onValueChange={(value) => handleFormChange('university_id', value)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="-- Select University --" value="" />
+                                    {universities.map((uni) => (
+                                        <Picker.Item
+                                            key={uni.id}
+                                            label={uni.name || uni.university_name}
+                                            value={uni.id.toString()}
+                                        />
+                                    ))}
+                                </Picker>
+                            </View>
+
+                            {/* Program Name */}
+                            <Text style={styles.filterLabel}>Program Name *</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder="e.g., MSc Computer Science"
+                                placeholderTextColor={colors.gray400}
+                                value={formData.program_name}
+                                onChangeText={(value) => handleFormChange('program_name', value)}
+                            />
+
+                            {/* Application Date */}
+                            <Text style={styles.filterLabel}>Application Date</Text>
+                            <TouchableOpacity
+                                style={styles.dateButton}
+                                onPress={() => setShowAppDatePicker(true)}
+                            >
+                                <Ionicons name="calendar-outline" size={20} color={colors.textSecondary} />
+                                <Text style={styles.dateButtonText}>
+                                    {formData.application_date || 'Select Application Date'}
+                                </Text>
+                            </TouchableOpacity>
+
+                            {/* Decision Status */}
+                            <Text style={styles.filterLabel}>Decision Status</Text>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={formData.decision_status}
+                                    onValueChange={(value) => handleFormChange('decision_status', value)}
+                                    style={styles.picker}
+                                >
+                                    <Picker.Item label="Pending" value="Pending" />
+                                    <Picker.Item label="Accepted" value="Accepted" />
+                                    <Picker.Item label="Rejected" value="Rejected" />
+                                    <Picker.Item label="Waitlisted" value="Waitlisted" />
+                                </Picker>
+                            </View>
+
+                            {/* Offer Letter Upload */}
+                            <Text style={styles.filterLabel}>Offer Letter (Optional)</Text>
+                            <TouchableOpacity style={styles.uploadButton} onPress={handlePickDocument}>
+                                <Ionicons name="cloud-upload-outline" size={20} color={colors.primary} />
+                                <Text style={styles.uploadButtonText}>
+                                    {offerLetterFile ? offerLetterFile.name : 'Upload Offer Letter'}
+                                </Text>
+                            </TouchableOpacity>
+                            {offerLetterFile && (
+                                <Text style={styles.fileSelectedText}>
+                                    File selected: {offerLetterFile.name}
+                                </Text>
+                            )}
+                        </ScrollView>
+
+                        <TouchableOpacity
+                            style={[styles.applyButton, modalLoading && styles.applyButtonDisabled]}
+                            onPress={handleSubmitApplication}
+                            disabled={modalLoading}
+                        >
+                            {modalLoading ? (
+                                <ActivityIndicator size="small" color={colors.white} />
+                            ) : (
+                                <Text style={styles.applyButtonText}>
+                                    {editingApplication ? 'Update Application' : 'Create Application'}
+                                </Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Application Date Picker */}
+            <DatePickerModal
+                visible={showAppDatePicker}
+                onClose={() => setShowAppDatePicker(false)}
+                onSelectDate={(date) => {
+                    handleFormChange('application_date', date);
+                    setShowAppDatePicker(false);
+                }}
+                selectedDate={formData.application_date}
+                title="Select Application Date"
+            />
+
+            {/* FAB - Create Application Button */}
+            <TouchableOpacity style={styles.fab} onPress={openCreateApplicationModal}>
+                <Ionicons name="add" size={28} color={colors.white} />
+            </TouchableOpacity>
         </SafeAreaView>
     );
 };
@@ -675,6 +958,7 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     card: {
         backgroundColor: colors.white,
@@ -858,6 +1142,55 @@ const styles = StyleSheet.create({
         fontSize: fontSizes.md,
         fontWeight: '600',
         color: colors.white,
+    },
+    cardActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    textInput: {
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        borderRadius: borderRadius.md,
+        padding: spacing.sm,
+        backgroundColor: colors.gray50,
+        fontSize: fontSizes.sm,
+        color: colors.text,
+    },
+    uploadButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: spacing.md,
+        backgroundColor: `${colors.primary}10`,
+        borderRadius: borderRadius.md,
+        borderWidth: 1,
+        borderColor: colors.primary,
+        borderStyle: 'dashed',
+        gap: spacing.xs,
+    },
+    uploadButtonText: {
+        fontSize: fontSizes.sm,
+        color: colors.primary,
+        fontWeight: '600',
+    },
+    fileSelectedText: {
+        fontSize: fontSizes.xs,
+        color: colors.success,
+        marginTop: spacing.xs,
+        fontStyle: 'italic',
+    },
+    fab: {
+        position: 'absolute',
+        bottom: BOTTOM_TAB_HEIGHT + 20,
+        right: spacing.xl,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: colors.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...shadows.lg,
+        elevation: 8,
     },
 });
 

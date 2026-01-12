@@ -180,6 +180,35 @@ export const getAllUniversities = async () => {
     return response.data;
 };
 
+/**
+ * Create new application
+ * @param {FormData} formData - Application data with optional file upload
+ * @returns {Promise<object>}
+ */
+export const createApplication = async (formData) => {
+    const response = await api.post('application', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
+};
+
+/**
+ * Update existing application
+ * @param {number} id - Application ID
+ * @param {FormData} formData - Updated application data with optional file upload
+ * @returns {Promise<object>}
+ */
+export const updateApplication = async (id, formData) => {
+    const response = await api.patch(`application/${id}`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
+};
+
 export default {
     getAllApplications,
     getApplicationById,
@@ -197,4 +226,6 @@ export default {
     getAllBranches,
     getAllStudents,
     getAllUniversities,
+    createApplication,
+    updateApplication,
 };

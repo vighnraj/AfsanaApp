@@ -21,6 +21,7 @@ import { showToast } from '../../components/common/Toast';
 import { CustomHeader, NotificationBell } from '../../components/common';
 import Card from '../../components/common/Card';
 import { LoadingSpinner } from '../../components/common/Loading';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -78,7 +79,7 @@ export const DashboardScreen = ({ navigation }) => {
             <CustomHeader title="Staff Dashboard" showBack={false} rightAction={<NotificationBell />} />
             <ScrollView
                 style={styles.container}
-                contentContainerStyle={styles.content}
+                contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                 <View style={styles.subHeader}>
@@ -229,7 +230,7 @@ export const MoreScreen = ({ navigation }) => {
     return (
         <View style={styles.safeArea}>
             <CustomHeader title="Settings" showBack={false} />
-            <ScrollView contentContainerStyle={styles.pad}>
+            <ScrollView contentContainerStyle={[styles.pad, { paddingBottom: BOTTOM_TAB_SPACING }]}>
                 <View style={[styles.userCard, shadows.md]}>
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>{user?.full_name?.charAt(0) || 'S'}</Text>

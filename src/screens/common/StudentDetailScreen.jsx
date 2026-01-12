@@ -22,6 +22,7 @@ import { showToast } from '../../components/common/Toast';
 import { formatDateReadable, getInitials } from '../../utils/formatting';
 import { STATUS_OPTIONS, GENDER_OPTIONS } from '../../utils/constants';
 import DateRangePicker from '../../components/common/DateRangePicker';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const StudentDetailScreen = ({ navigation, route }) => {
     const { studentId } = route.params;
@@ -198,7 +199,7 @@ const StudentDetailScreen = ({ navigation, route }) => {
 
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
+                contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}
             >
                 {/* Profile Header Card */}
                 <View style={[styles.card, shadows.md, styles.profileCard]}>

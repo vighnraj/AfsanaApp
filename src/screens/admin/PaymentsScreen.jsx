@@ -25,6 +25,7 @@ import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable, formatCurrency } from '../../utils/formatting';
 import FilterDropdown from '../../components/common/FilterDropdown';
+import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
 
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Overdue', 'Cancelled'];
 const PAYMENT_TYPE_OPTIONS = ['Tuition', 'Application Fee', 'Visa Fee', 'Other'];
@@ -385,6 +386,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     paymentCard: {
         backgroundColor: colors.white,
@@ -475,7 +477,7 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         right: spacing.md,
-        bottom: 80,
+        bottom: BOTTOM_TAB_HEIGHT + 20,
         width: 56,
         height: 56,
         borderRadius: 28,

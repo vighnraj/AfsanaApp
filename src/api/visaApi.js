@@ -44,6 +44,29 @@ export const createUniversity = async (universityData) => {
 };
 
 /**
+ * Update existing university
+ * @param {string} id - University ID
+ * @param {object} universityData - { user_id, name, logo_url, location, programs, highlights, contact_phone, contact_email }
+ * @returns {Promise<object>}
+ */
+export const updateUniversity = async (id, universityData) => {
+    const formData = new FormData();
+    formData.append('user_id', universityData.user_id);
+    formData.append('name', universityData.name);
+    formData.append('logo_url', universityData.logo_url);
+    formData.append('location', universityData.location);
+    formData.append('programs', JSON.stringify(universityData.programs));
+    formData.append('highlights', JSON.stringify(universityData.highlights));
+    formData.append('contact_phone', universityData.contact_phone);
+    formData.append('contact_email', universityData.contact_email);
+
+    const response = await api.patch(`universities/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+};
+
+/**
  * Delete university
  * @param {string} id
  * @returns {Promise<object>}
@@ -166,6 +189,7 @@ export default {
     getUniversities,
     getUniversityById,
     createUniversity,
+    updateUniversity,
     deleteUniversity,
     getVisaProcessByUniversityAndStudent,
     createVisaProcess,

@@ -18,7 +18,7 @@ import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context
 import { showToast } from '../../components/common/Toast';
 import { LoadingSpinner } from '../../components/common/Loading';
 import CustomHeader from '../../components/common/CustomHeader';
-import { VISA_STAGES, COUNTRIES } from '../../utils/constants';
+import { VISA_STAGES, COUNTRIES, BOTTOM_TAB_SPACING } from '../../utils/constants';
 import visaApi from '../../api/visaApi';
 import FilterDropdown from '../../components/common/FilterDropdown';
 
@@ -221,19 +221,34 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                 return (
                     <View style={styles.stageCard}>
                         <Text style={styles.stageTitle}>Document Submission</Text>
-                        {['ssc_doc', 'hsc_doc', 'bachelor_doc', 'ielts_doc', 'cv_doc', 'sop_doc'].map(docKey => (
-                            <TouchableOpacity key={docKey} style={styles.docRow} onPress={() => pickDocument(docKey)}>
-                                <View style={styles.docInfo}>
-                                    <Ionicons name="file-tray-full-outline" size={24} color={colors.primary} />
-                                    <Text style={styles.docLabel}>{docKey.replace('_', ' ').toUpperCase()}</Text>
+                        {['ssc_doc', 'hsc_doc', 'bachelor_doc', 'ielts_doc', 'cv_doc', 'sop_doc', 'financial_doc', 'recommendation_letter', 'work_experience_doc', 'passport_copy'].map(docKey => (
+                            <View key={docKey} style={styles.docContainer}>
+                                <TouchableOpacity style={styles.docRow} onPress={() => pickDocument(docKey)}>
+                                    <View style={styles.docInfo}>
+                                        <Ionicons name="file-tray-full-outline" size={24} color={colors.primary} />
+                                        <Text style={styles.docLabel}>{docKey.replace(/_/g, ' ').toUpperCase()}</Text>
+                                    </View>
+                                    <View style={styles.docStatus}>
+                                        <Text style={[styles.statusTag, { backgroundColor: formData[docKey] ? colors.success + '15' : colors.gray100 }]}>
+                                            {formData[docKey] ? 'Uploaded' : 'Pending'}
+                                        </Text>
+                                        <Ionicons name="chevron-forward" size={16} color={colors.gray400} />
+                                    </View>
+                                </TouchableOpacity>
+                                {/* Document Status Dropdown */}
+                                <View style={styles.statusRow}>
+                                    <Text style={styles.statusLabel}>Status:</Text>
+                                    <FilterDropdown
+                                        value={formData[`${docKey}_status`] || 'Pending'}
+                                        options={[
+                                            { value: 'Pending', label: 'Pending' },
+                                            { value: 'Approved', label: 'Approved' },
+                                            { value: 'Rejected', label: 'Rejected' }
+                                        ]}
+                                        onChange={(val) => handleInputChange(`${docKey}_status`, val)}
+                                    />
                                 </View>
-                                <View style={styles.docStatus}>
-                                    <Text style={[styles.statusTag, { backgroundColor: formData[docKey] ? colors.success + '15' : colors.gray100 }]}>
-                                        {formData[docKey] ? 'Uploaded' : 'Pending'}
-                                    </Text>
-                                    <Ionicons name="chevron-forward" size={16} color={colors.gray400} />
-                                </View>
-                            </TouchableOpacity>
+                            </View>
                         ))}
                     </View>
                 );
@@ -245,10 +260,36 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                         <TextInput style={styles.input} placeholder="Program Name" value={formData.program_name} onChangeText={(v) => handleInputChange('program_name', v)} />
                         <TextInput style={styles.input} placeholder="Application ID" value={formData.application_id} onChangeText={(v) => handleInputChange('application_id', v)} />
                         <TextInput style={styles.input} placeholder="Submission Date (YYYY-MM-DD)" value={formData.submission_date} onChangeText={(v) => handleInputChange('submission_date', v)} />
+
+                        <FilterDropdown
+                            label="Submission Method"
+                            value={formData.submission_method || 'Online'}
+                            options={[
+                                { value: 'Online', label: 'Online Portal' },
+                                { value: 'Email', label: 'Email' },
+                                { value: 'Postal', label: 'Postal Mail' },
+                                { value: 'Agent', label: 'Through Agent' }
+                            ]}
+                            onChange={(val) => handleInputChange('submission_method', val)}
+                        />
+
                         <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument('application_proof')}>
                             <Ionicons name="document-attach-outline" size={20} color={colors.primary} />
-                            <Text style={styles.uploadText}>{formData.application_proof?.name || 'Upload Submission Proof'}</Text>
+                            <Text style={styles.uploadText}>{formData.application_proof?.name || 'Upload Application Proof'}</Text>
                         </TouchableOpacity>
+
+                        <FilterDropdown
+                            label="Application Status"
+                            value={formData.application_status || 'Submitted'}
+                            options={[
+                                { value: 'Submitted', label: 'Submitted' },
+                                { value: 'Under Review', label: 'Under Review' },
+                                { value: 'Pending Documents', label: 'Pending Documents' },
+                                { value: 'Approved', label: 'Approved' },
+                                { value: 'Rejected', label: 'Rejected' }
+                            ]}
+                            onChange={(val) => handleInputChange('application_status', val)}
+                        />
                     </View>
                 );
 
@@ -258,9 +299,36 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                         <Text style={styles.stageTitle}>Fee Payment</Text>
                         <View style={styles.row}>
                             <TextInput style={[styles.input, { flex: 1, marginRight: 8 }]} placeholder="Amount" value={formData.fee_amount} onChangeText={(v) => handleInputChange('fee_amount', v)} keyboardType="numeric" />
-                            <TextInput style={[styles.input, { width: 80 }]} placeholder="USD" value={formData.fee_currency} onChangeText={(v) => handleInputChange('fee_currency', v)} />
+                            <View style={{ width: 120 }}>
+                                <FilterDropdown
+                                    value={formData.fee_currency || 'USD'}
+                                    options={[
+                                        { value: 'USD', label: 'USD' },
+                                        { value: 'EUR', label: 'EUR' },
+                                        { value: 'GBP', label: 'GBP' },
+                                        { value: 'BDT', label: 'BDT' },
+                                        { value: 'CAD', label: 'CAD' },
+                                        { value: 'AUD', label: 'AUD' }
+                                    ]}
+                                    onChange={(val) => handleInputChange('fee_currency', val)}
+                                />
+                            </View>
                         </View>
-                        <TextInput style={styles.input} placeholder="Payment Method" value={formData.fee_method} onChangeText={(v) => handleInputChange('fee_method', v)} />
+
+                        <TextInput style={styles.input} placeholder="Payment Method (e.g., Bank Transfer, Credit Card)" value={formData.fee_method} onChangeText={(v) => handleInputChange('fee_method', v)} />
+
+                        <FilterDropdown
+                            label="Payment Status"
+                            value={formData.fee_status || 'Pending'}
+                            options={[
+                                { value: 'Pending', label: 'Pending' },
+                                { value: 'Paid', label: 'Paid' },
+                                { value: 'Partial', label: 'Partial Payment' },
+                                { value: 'Refunded', label: 'Refunded' }
+                            ]}
+                            onChange={(val) => handleInputChange('fee_status', val)}
+                        />
+
                         <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument('fee_proof')}>
                             <Ionicons name="receipt-outline" size={20} color={colors.primary} />
                             <Text style={styles.uploadText}>{formData.fee_proof?.name || 'Upload Payment Receipt'}</Text>
@@ -272,12 +340,29 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                 return (
                     <View style={styles.stageCard}>
                         <Text style={styles.stageTitle}>University Interview</Text>
-                        <TextInput style={styles.input} placeholder="Interview Date & Time" value={formData.interview_date} onChangeText={(v) => handleInputChange('interview_date', v)} />
-                        <TextInput style={styles.input} placeholder="Platform (e.g. Zoom)" value={formData.interview_platform} onChangeText={(v) => handleInputChange('interview_platform', v)} />
-                        <TextInput style={[styles.input, styles.textArea]} placeholder="Interviewer Feedback" multiline value={formData.interview_feedback} onChangeText={(v) => handleInputChange('interview_feedback', v)} />
+                        <TextInput style={styles.input} placeholder="Interview Date & Time (YYYY-MM-DD HH:MM)" value={formData.interview_date} onChangeText={(v) => handleInputChange('interview_date', v)} />
+                        <TextInput style={styles.input} placeholder="Platform (e.g. Zoom, Microsoft Teams)" value={formData.interview_platform} onChangeText={(v) => handleInputChange('interview_platform', v)} />
+                        <TextInput style={styles.input} placeholder="Interviewer Name" value={formData.interviewer_name} onChangeText={(v) => handleInputChange('interviewer_name', v)} />
+
+                        <FilterDropdown
+                            label="Interview Result"
+                            value={formData.interview_result || 'Pending'}
+                            options={[
+                                { value: 'Pending', label: 'Pending' },
+                                { value: 'Accepted', label: 'Accepted' },
+                                { value: 'Rejected', label: 'Rejected' },
+                                { value: 'Waitlisted', label: 'Waitlisted' }
+                            ]}
+                            onChange={(val) => handleInputChange('interview_result', val)}
+                        />
+
+                        <TextInput style={styles.input} placeholder="Result Date (YYYY-MM-DD)" value={formData.interview_result_date} onChangeText={(v) => handleInputChange('interview_result_date', v)} />
+                        <TextInput style={[styles.input, styles.textArea]} placeholder="Interview Feedback" multiline numberOfLines={3} value={formData.interview_feedback} onChangeText={(v) => handleInputChange('interview_feedback', v)} />
+                        <TextInput style={[styles.input, styles.textArea]} placeholder="Interview Summary / Notes" multiline numberOfLines={3} value={formData.interview_summary} onChangeText={(v) => handleInputChange('interview_summary', v)} />
+
                         <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument('interview_recording')}>
                             <Ionicons name="videocam-outline" size={20} color={colors.primary} />
-                            <Text style={styles.uploadText}>{formData.interview_recording?.name || 'Upload Interview Recording Link/File'}</Text>
+                            <Text style={styles.uploadText}>{formData.interview_recording?.name || 'Upload Interview Recording (Admin Only)'}</Text>
                         </TouchableOpacity>
                     </View>
                 );
@@ -286,8 +371,28 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                 return (
                     <View style={styles.stageCard}>
                         <Text style={styles.stageTitle}>Offer Letter</Text>
-                        <TextInput style={styles.input} placeholder="Offer Date" value={formData.conditional_offer_date} onChangeText={(v) => handleInputChange('conditional_offer_date', v)} />
-                        <TextInput style={[styles.input, styles.textArea]} placeholder="Conditions" multiline value={formData.conditional_conditions} onChangeText={(v) => handleInputChange('conditional_conditions', v)} />
+                        <TextInput style={styles.input} placeholder="Offer Date (YYYY-MM-DD)" value={formData.conditional_offer_date} onChangeText={(v) => handleInputChange('conditional_offer_date', v)} />
+                        <TextInput style={[styles.input, styles.textArea]} placeholder="Conditional Conditions (if any)" multiline numberOfLines={4} value={formData.conditional_conditions} onChangeText={(v) => handleInputChange('conditional_conditions', v)} />
+
+                        <View style={styles.row}>
+                            <TextInput style={[styles.input, { flex: 1, marginRight: 8 }]} placeholder="Tuition Fee Amount" value={formData.tuition_fee_offer} onChangeText={(v) => handleInputChange('tuition_fee_offer', v)} keyboardType="numeric" />
+                            <View style={{ width: 120 }}>
+                                <FilterDropdown
+                                    value={formData.tuition_currency || 'USD'}
+                                    options={[
+                                        { value: 'USD', label: 'USD' },
+                                        { value: 'EUR', label: 'EUR' },
+                                        { value: 'GBP', label: 'GBP' },
+                                        { value: 'CAD', label: 'CAD' },
+                                        { value: 'AUD', label: 'AUD' }
+                                    ]}
+                                    onChange={(val) => handleInputChange('tuition_currency', val)}
+                                />
+                            </View>
+                        </View>
+
+                        <TextInput style={[styles.input, styles.textArea]} placeholder="Tuition Comments / Payment Plan" multiline numberOfLines={2} value={formData.tuition_comments} onChangeText={(v) => handleInputChange('tuition_comments', v)} />
+
                         <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument('conditional_offer_upload')}>
                             <Ionicons name="document-text-outline" size={20} color={colors.primary} />
                             <Text style={styles.uploadText}>{formData.conditional_offer_upload?.name || 'Upload Offer Letter'}</Text>
@@ -370,14 +475,43 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                 return (
                     <View style={styles.stageCard}>
                         <Text style={styles.stageTitle}>Final Visa Status</Text>
-                        <TextInput style={styles.input} placeholder="Status (Issued/Rejected)" value={formData.visa_status} onChangeText={(v) => handleInputChange('visa_status', v)} />
-                        <TextInput style={styles.input} placeholder="Decision Date" value={formData.decision_date} onChangeText={(v) => handleInputChange('decision_date', v)} />
+
+                        <FilterDropdown
+                            label="Visa Status"
+                            value={formData.visa_status || 'Pending'}
+                            options={[
+                                { value: 'Pending', label: 'Pending' },
+                                { value: 'Approved', label: 'Approved' },
+                                { value: 'Issued', label: 'Issued' },
+                                { value: 'Rejected', label: 'Rejected' }
+                            ]}
+                            onChange={(val) => handleInputChange('visa_status', val)}
+                        />
+
+                        <TextInput style={styles.input} placeholder="Decision Date (YYYY-MM-DD)" value={formData.decision_date} onChangeText={(v) => handleInputChange('decision_date', v)} />
+
                         <TouchableOpacity style={styles.uploadBtn} onPress={() => pickDocument('visa_sticker_upload')}>
                             <Ionicons name="image-outline" size={20} color={colors.primary} />
-                            <Text style={styles.uploadText}>{formData.visa_sticker_upload?.name || 'Upload Visa Sticker'}</Text>
+                            <Text style={styles.uploadText}>{formData.visa_sticker_upload?.name || 'Upload Visa Sticker / Approval Document'}</Text>
                         </TouchableOpacity>
-                        {formData.visa_status === 'Rejected' && (
-                            <TextInput style={[styles.input, styles.textArea]} placeholder="Rejection Reason" multiline value={formData.rejection_reason} onChangeText={(v) => handleInputChange('rejection_reason', v)} />
+
+                        {(formData.visa_status === 'Rejected') && (
+                            <>
+                                <TextInput style={[styles.input, styles.textArea]} placeholder="Rejection Reason (Detailed Explanation)" multiline numberOfLines={4} value={formData.rejection_reason} onChangeText={(v) => handleInputChange('rejection_reason', v)} />
+
+                                <FilterDropdown
+                                    label="Appeal Status"
+                                    value={formData.appeal_status || 'Not Required'}
+                                    options={[
+                                        { value: 'Not Required', label: 'Not Required' },
+                                        { value: 'Appealed', label: 'Appealed' },
+                                        { value: 'Under Review', label: 'Under Review' },
+                                        { value: 'Approved', label: 'Appeal Approved' },
+                                        { value: 'Rejected', label: 'Appeal Rejected' }
+                                    ]}
+                                    onChange={(val) => handleInputChange('appeal_status', val)}
+                                />
+                            </>
                         )}
                     </View>
                 );
@@ -482,7 +616,11 @@ const styles = StyleSheet.create({
     stepBadgeDone: { backgroundColor: colors.success },
     stepLabel: { fontSize: 10, color: colors.textSecondary, textAlign: 'center' },
     stepLabelActive: { color: colors.primary, fontWeight: '700' },
-    content: { flex: 1, padding: spacing.md },
+    content: {
+        flex: 1,
+        padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
+    },
     progressSection: { backgroundColor: colors.white, padding: spacing.md, borderRadius: borderRadius.lg, marginBottom: spacing.md, ...shadows.sm },
     progressHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
     progressTitle: { fontSize: fontSizes.sm, fontWeight: '600', color: colors.text },
@@ -496,11 +634,14 @@ const styles = StyleSheet.create({
     textArea: { height: 100, textAlignVertical: 'top' },
     uploadBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.primary + '10', borderWidth: 1, borderColor: colors.primary + '50', borderStyle: 'dashed', borderRadius: borderRadius.md, padding: spacing.md, marginBottom: spacing.md },
     uploadText: { marginLeft: 10, color: colors.primary, fontSize: fontSizes.sm, fontWeight: '600', flex: 1 },
-    docRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.gray100 },
+    docContainer: { marginBottom: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.gray100, paddingBottom: spacing.sm },
+    docRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.sm },
     docInfo: { flexDirection: 'row', alignItems: 'center' },
     docLabel: { marginLeft: 12, fontSize: fontSizes.sm, fontWeight: '600', color: colors.text },
     docStatus: { flexDirection: 'row', alignItems: 'center' },
     statusTag: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, fontSize: 10, color: colors.textSecondary, marginRight: 8, overflow: 'hidden' },
+    statusRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, paddingLeft: 36 },
+    statusLabel: { fontSize: fontSizes.xs, fontWeight: '600', color: colors.textSecondary, marginRight: spacing.sm, minWidth: 50 },
     saveBtn: { backgroundColor: colors.primary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: spacing.lg, borderRadius: borderRadius.md, marginTop: spacing.lg, ...shadows.md },
     saveBtnText: { color: colors.white, fontSize: fontSizes.md, fontWeight: '700', marginRight: 10 },
     emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 100 },

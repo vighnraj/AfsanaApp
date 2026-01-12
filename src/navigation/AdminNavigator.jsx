@@ -24,17 +24,8 @@ import StudentDetailScreen from '../screens/common/StudentDetailScreen';
 import AddProcessorScreen from '../screens/admin/AddProcessorScreen';
 import RolesManagementScreen from '../screens/admin/RolesManagementScreen';
 import PermissionsScreen from '../screens/admin/PermissionsScreen';
-import ChatScreen from '../screens/common/ChatScreen';
 
-// BATCH 3: Reporting & Analytics
-import ReportsScreen from '../screens/admin/ReportsScreen';
-import LeadReportsScreen from '../screens/admin/LeadReportsScreen';
-import StudentReportsScreen from '../screens/admin/StudentReportsScreen';
-import CounselorReportsScreen from '../screens/admin/CounselorReportsScreen';
-import PaymentReportsScreen from '../screens/admin/PaymentReportsScreen';
-import BranchReportsScreen from '../screens/admin/BranchReportsScreen';
-import ApplicationReportsScreen from '../screens/admin/ApplicationReportsScreen';
-import VisaReportsScreen from '../screens/admin/VisaReportsScreen';
+// BATCH 3: Reporting & Analytics - REMOVED FOR BETA VERSION (only basic dashboard kept)
 
 // BATCH 4: Application & Payment
 import ApplicationTrackerScreen from '../screens/admin/ApplicationTrackerScreen';
@@ -46,7 +37,13 @@ import BranchManagementScreen from '../screens/admin/BranchManagementScreen';
 import AddBranchScreen from '../screens/admin/AddBranchScreen';
 import TaskRemindersScreen from '../screens/admin/TaskRemindersScreen';
 import TodaysInquiriesScreen from '../screens/admin/TodaysInquiriesScreen';
-import NotificationCenterScreen from '../screens/notification/NotificationCenterScreen';
+
+// BATCH 6: Staff & University Management (NEW)
+import UniversityManagementScreen from '../screens/admin/UniversityManagementScreen';
+import CounselorManagementScreen from '../screens/admin/CounselorManagementScreen';
+import ProcessorManagementScreen from '../screens/admin/ProcessorManagementScreen';
+import StaffManagementScreen from '../screens/admin/StaffManagementScreen';
+import VisaProcessManagementScreen from '../screens/admin/VisaProcessManagementScreen';
 
 import { colors, fontSizes } from '../context/ThemeContext';
 
@@ -101,15 +98,7 @@ const MoreStack = () => (
         <Stack.Screen name="Permissions" component={PermissionsScreen} options={{ title: 'Configure Permissions' }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
 
-        {/* BATCH 3: Reporting & Analytics */}
-        <Stack.Screen name="Reports" component={ReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="LeadReports" component={LeadReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="StudentReports" component={StudentReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="CounselorReports" component={CounselorReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="PaymentReports" component={PaymentReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="BranchReports" component={BranchReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ApplicationReports" component={ApplicationReportsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="VisaReports" component={VisaReportsScreen} options={{ headerShown: false }} />
+        {/* BATCH 3: Reporting & Analytics - REMOVED FOR BETA VERSION */}
 
         {/* BATCH 4: Application & Payment */}
         <Stack.Screen name="ApplicationTracker" component={ApplicationTrackerScreen} options={{ headerShown: false }} />
@@ -121,8 +110,13 @@ const MoreStack = () => (
         <Stack.Screen name="AddBranch" component={AddBranchScreen} options={{ title: 'Add Branch' }} />
         <Stack.Screen name="TaskReminders" component={TaskRemindersScreen} options={{ headerShown: false }} />
         <Stack.Screen name="TodaysInquiries" component={TodaysInquiriesScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Chat" component={ChatScreen} options={{ title: 'Chat' }} />
-        <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} options={{ headerShown: false }} />
+
+        {/* BATCH 6: Staff & University Management (NEW) */}
+        <Stack.Screen name="UniversityManagement" component={UniversityManagementScreen} options={{ title: 'University Management' }} />
+        <Stack.Screen name="CounselorManagement" component={CounselorManagementScreen} options={{ title: 'Counselor Management' }} />
+        <Stack.Screen name="ProcessorManagement" component={ProcessorManagementScreen} options={{ title: 'Processor Management' }} />
+        <Stack.Screen name="StaffManagement" component={StaffManagementScreen} options={{ title: 'Staff Management' }} />
+        <Stack.Screen name="VisaProcessManagement" component={VisaProcessManagementScreen} options={{ title: 'Visa Process Management' }} />
     </Stack.Navigator>
 );
 

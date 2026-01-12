@@ -32,6 +32,7 @@ import {
 import { getAllStudents } from '../../api/applicationApi';
 import { getAllCounselors } from '../../api/applicationApi';
 import DatePickerModal from '../../components/common/DatePickerModal';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const TaskRemindersScreen = ({ navigation }) => {
     const { user } = useContext(AuthContext);
@@ -447,15 +448,7 @@ const TaskRemindersScreen = ({ navigation }) => {
         );
     };
 
-    return (
-        <View style={{ flex: 1, paddingTop: 100, alignItems: 'center', backgroundColor: 'white' }}>
-            <Text>DEBUG MODE: Screen Loaded Successfully</Text>
-            <Text>If you see this, the imports are fine.</Text>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 20, marginTop: 20, backgroundColor: '#eee' }}>
-                <Text>Go Back</Text>
-            </TouchableOpacity>
-        </View>
-    );
+
 
     /* Original Return below */
     return (
@@ -533,6 +526,7 @@ const TaskRemindersScreen = ({ navigation }) => {
             ) : (
                 <ScrollView
                     style={styles.content}
+                    contentContainerStyle={{ paddingBottom: BOTTOM_TAB_SPACING }}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}

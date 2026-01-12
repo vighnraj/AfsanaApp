@@ -8,24 +8,29 @@ import { Ionicons } from '@expo/vector-icons';
 // Screens
 import { DashboardScreen, StudentDetailsScreen, VisaProcessingScreen, MoreScreen } from '../screens/processor';
 import ProfileScreen from '../screens/common/ProfileScreen';
-import NotificationCenterScreen from '../screens/notification/NotificationCenterScreen';
 
-import { colors, fontSizes } from '../context/ThemeContext';
-import ChatListScreen from '../screens/common/ChatListScreen';
-import ChatScreen from '../screens/common/ChatScreen';
+import { colors } from '../context/ThemeContext';
+import { getTabScreenOptions } from './navigationStyles';
+import CustomHeader from '../components/common/CustomHeader';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const commonStackOptions = {
+    header: ({ navigation, route, options }) => (
+        <CustomHeader
+            title={options.title || route.name}
+            showBack={navigation.canGoBack()}
+            onBack={() => navigation.goBack()}
+        />
+    ),
+    headerShown: true,
+    animationEnabled: true,
+};
+
 // Student Stack
 const StudentStack = () => (
-    <Stack.Navigator
-        screenOptions={{
-            headerStyle: { backgroundColor: colors.primary },
-            headerTintColor: colors.white,
-            headerTitleStyle: { fontWeight: '600' },
-        }}
-    >
+    <Stack.Navigator screenOptions={commonStackOptions}>
         <Stack.Screen name="StudentDetails" component={StudentDetailsScreen} options={{ title: 'Assigned Students' }} />
         <Stack.Screen name="VisaProcess" component={VisaProcessingScreen} options={{ title: 'Visa Processing' }} />
     </Stack.Navigator>
@@ -33,18 +38,9 @@ const StudentStack = () => (
 
 // More Stack
 const MoreStack = () => (
-    <Stack.Navigator
-        screenOptions={{
-            headerStyle: { backgroundColor: colors.primary },
-            headerTintColor: colors.white,
-            headerTitleStyle: { fontWeight: '600' },
-        }}
-    >
+    <Stack.Navigator screenOptions={commonStackOptions}>
         <Stack.Screen name="MoreMenu" component={MoreScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ChatList" component={ChatListScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
-        <Stack.Screen name="NotificationCenter" component={NotificationCenterScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
 );
 
@@ -52,7 +48,7 @@ const ProcessorNavigator = () => {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
-                headerShown: false,
+                ...getTabScreenOptions(),
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
 
@@ -77,17 +73,6 @@ const ProcessorNavigator = () => {
                 },
                 tabBarActiveTintColor: colors.primary,
                 tabBarInactiveTintColor: colors.gray400,
-                tabBarStyle: {
-                    backgroundColor: colors.white,
-                    borderTopColor: colors.gray200,
-                    paddingBottom: 5,
-                    paddingTop: 5,
-                    height: 60,
-                },
-                tabBarLabelStyle: {
-                    fontSize: fontSizes.xs,
-                    fontWeight: '500',
-                },
             })}
         >
             <Tab.Screen name="Dashboard" component={DashboardScreen} />

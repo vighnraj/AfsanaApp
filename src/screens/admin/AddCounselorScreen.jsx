@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { createCounselor } from '../../api/userApi';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
@@ -165,6 +166,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     formCard: {
         backgroundColor: colors.white,

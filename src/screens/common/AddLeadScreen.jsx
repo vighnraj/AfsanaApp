@@ -31,7 +31,8 @@ import {
     INQUIRY_TYPE_OPTIONS,
     EDUCATION_LEVEL_OPTIONS,
     TEST_TYPE_OPTIONS,
-    PRIORITY_OPTIONS
+    PRIORITY_OPTIONS,
+    BOTTOM_TAB_SPACING
 } from '../../utils/constants';
 
 const GENDER_OPTIONS = [
@@ -262,7 +263,7 @@ const AddLeadScreen = ({ navigation, route }) => {
                 onBack={() => navigation.goBack()}
             />
 
-            <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 40 }]}>
+            <ScrollView contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}>
 
                 {/* Section 1: Inquiry Basics */}
                 <View style={[styles.sectionCard, shadows.sm]}>

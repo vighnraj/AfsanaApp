@@ -21,10 +21,11 @@ import { getLeads, updateLead, assignInquiry, deleteLead } from '../../api/leadA
 import { getStaffById, getCounselors } from '../../api/userApi';
 import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable, getInitials } from '../../utils/formatting';
-import { STATUS_OPTIONS, COUNTRIES, PRIORITY_OPTIONS, LEAD_TYPE_OPTIONS, BRANCH_OPTIONS, FOLLOW_UP_PRESETS, SORT_OPTIONS } from '../../utils/constants';
+import { STATUS_OPTIONS, COUNTRIES, PRIORITY_OPTIONS, LEAD_TYPE_OPTIONS, BRANCH_OPTIONS, FOLLOW_UP_PRESETS, SORT_OPTIONS, LEAD_SOURCE_OPTIONS } from '../../utils/constants';
 import DateRangePicker from '../../components/common/DateRangePicker';
 import FilterDropdown from '../../components/common/FilterDropdown';
 import LeadDetailModal from '../../components/lead/LeadDetailModal';
@@ -771,7 +772,7 @@ const LeadScreen = ({ navigation }) => {
             {/* List */}
             <FlatList
                 data={filteredLeads}
-                keyExtractor={(item) => item.id?.toString()}
+                keyExtractor={(item, index) => item.id?.toString() || index.toString()}
                 renderItem={renderLeadItem}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
@@ -923,6 +924,7 @@ const styles = StyleSheet.create({
     listContent: {
         padding: spacing.md,
         paddingTop: 0,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     leadCard: {
         backgroundColor: colors.white,

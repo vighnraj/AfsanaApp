@@ -25,6 +25,7 @@ const CustomHeader = ({
     transparent = false,
     menuIcon = 'menu-outline',
     onMenu,
+    useSafeArea = true,
 }) => {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
@@ -40,15 +41,11 @@ const CustomHeader = ({
     const StatusIcon = showBack ? 'chevron-back' : menuIcon;
     const onLeftPress = showBack ? handleBack : (onMenu || (() => navigation.openDrawer && navigation.openDrawer())); // Fallback to drawer if available
 
-    // If it's a stack screen without back button, maybe show nothing or just Logo?
-    // For now, if showBack is false and onMenu is undefined, and no drawer, we might show nothing or logo?
-    // Let's assume standard behavior: Back or Menu/Logo.
-
     return (
         <View
             style={[
                 styles.container,
-                { paddingTop: insets.top },
+                { paddingTop: useSafeArea ? insets.top : 0 },
                 !transparent && styles.surface,
             ]}
         >
@@ -104,7 +101,7 @@ const styles = StyleSheet.create({
         borderBottomColor: colors.gray100,
     },
     content: {
-        height: 60,
+        height: 40,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: spacing.md,

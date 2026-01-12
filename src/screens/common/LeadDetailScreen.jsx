@@ -24,6 +24,7 @@ import DateRangePicker from '../../components/common/DateRangePicker';
 import FilterDropdown from '../../components/common/FilterDropdown';
 import { useAuth } from '../../context/AuthContext';
 import { TextInput, Modal, ActivityIndicator } from 'react-native';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const LeadDetailScreen = ({ navigation, route }) => {
     const { leadId } = route.params;
@@ -276,7 +277,7 @@ const LeadDetailScreen = ({ navigation, route }) => {
 
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 20 }]}
+                contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}
             >
                 {/* Profile Header Card */}
                 <View style={[styles.card, shadows.md, styles.profileCard]}>

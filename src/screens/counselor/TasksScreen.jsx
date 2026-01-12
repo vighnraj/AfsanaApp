@@ -9,17 +9,20 @@ import {
     TouchableOpacity,
     RefreshControl,
     Dimensions,
+    Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useAuth } from '../../context/AuthContext';
 import { getCounselorTasks, updateTask } from '../../api/userApi';
+import { deleteTask } from '../../api/taskApi';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { LoadingSpinner, LoadingList } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable } from '../../utils/formatting';
 import { CustomHeader } from '../../components/common';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const { width: screenWidth } = Dimensions.get('window');
 const isSmallDevice = screenWidth < 375;
@@ -71,6 +74,30 @@ const TasksScreen = ({ navigation }) => {
             console.error('Update status error:', error);
             showToast.error('Error', 'Failed to update task status');
         }
+    };
+
+    const handleDeleteTask = (taskId, taskName) => {
+        Alert.alert(
+            'Delete Task',
+            `Are you sure you want to delete "${taskName}"?`,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await deleteTask(taskId);
+                            showToast.success('Success', 'Task deleted successfully');
+                            fetchTasks();
+                        } catch (error) {
+                            console.error('Delete task error:', error);
+                            showToast.error('Error', 'Failed to delete task');
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     const getFilteredTasks = () => {
@@ -198,6 +225,13 @@ const TasksScreen = ({ navigation }) => {
                     <Ionicons name="time-outline" size={16} color={colors.info} />
                     <Text style={[styles.actionBtnText, { color: colors.info }]}>In Progress</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.actionBtn, { backgroundColor: `${colors.error}15` }]}
+                    onPress={() => handleDeleteTask(item.id, item.task_name || item.title)}
+                >
+                    <Ionicons name="trash-outline" size={16} color={colors.error} />
+                    <Text style={[styles.actionBtnText, { color: colors.error }]}>Delete</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -311,7 +345,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: spacing.md,
-        paddingBottom: spacing.xxl,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     taskCard: {
         backgroundColor: colors.white,

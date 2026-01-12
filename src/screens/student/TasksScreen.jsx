@@ -18,6 +18,7 @@ import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context
 import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable } from '../../utils/formatting';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const TasksScreen = ({ navigation }) => {
     const [tasks, setTasks] = useState([]);
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     taskCard: {
         backgroundColor: colors.white,

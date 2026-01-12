@@ -22,6 +22,7 @@ import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable } from '../../utils/formatting';
 import FilterDropdown from '../../components/common/FilterDropdown';
+import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
 
 const TASK_STATUS_OPTIONS = ['Pending', 'In Progress', 'Completed', 'Overdue'];
 const PRIORITY_OPTIONS = ['Low', 'Medium', 'High', 'Urgent'];
@@ -371,6 +372,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     taskCard: {
         backgroundColor: colors.white,
@@ -461,7 +463,7 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         right: spacing.md,
-        bottom: 80,
+        bottom: BOTTOM_TAB_HEIGHT + 20,
         width: 56,
         height: 56,
         borderRadius: 28,

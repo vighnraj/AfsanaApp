@@ -4,11 +4,11 @@ import { colors, shadows, borderRadius, fontSizes } from '../context/ThemeContex
 export const getTabScreenOptions = () => ({
     headerShown: false,
     tabBarStyle: {
-        height: Platform.OS === 'ios' ? 85 : 65,
+        height: Platform.OS === 'ios' ? 105 : 85,
         backgroundColor: colors.white,
         borderTopWidth: 0,
         ...shadows.md, // Premium floating shadow
-        paddingBottom: Platform.OS === 'ios' ? 25 : 10,
+        paddingBottom: Platform.OS === 'ios' ? 40 : 25,
         paddingTop: 10,
         position: 'absolute',
         bottom: 0,

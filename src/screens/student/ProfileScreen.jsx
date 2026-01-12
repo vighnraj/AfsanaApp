@@ -20,8 +20,11 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
+import { useScrollToHideTabs } from '../../hooks/useScrollToHideTabs';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const ProfileScreen = ({ navigation }) => {
+    const { onScroll } = useScrollToHideTabs(navigation);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -102,6 +105,8 @@ const ProfileScreen = ({ navigation }) => {
                     style={styles.container}
                     contentContainerStyle={styles.content}
                     showsVerticalScrollIndicator={false}
+                    onScroll={onScroll}
+                    scrollEventThrottle={16}
                     keyboardShouldPersistTaps="handled"
                 >
                     {/* Profile Header */}
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: spacing.md,
-        paddingBottom: spacing.xxl,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     profileHeader: {
         backgroundColor: colors.white,

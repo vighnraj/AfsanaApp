@@ -298,12 +298,24 @@ export const deleteAdmin = async (id) => {
     return response.data;
 };
 
+// ================== UNIVERSITY APIs ==================
+
+/**
+ * Get all universities
+ * @returns {Promise<array>}
+ */
+export const getUniversities = async () => {
+    const response = await api.get('universities');
+    return response.data;
+};
+
 export default {
     // Counselor
     getCounselors,
     createCounselor,
     updateCounselor,
     deleteCounselor,
+    getUniversities, // Added
     // Staff
     getStaff,
     getStaffById,

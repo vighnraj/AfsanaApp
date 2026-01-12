@@ -87,7 +87,7 @@ const LeadsScreen = ({ navigation }) => {
     const renderLeadItem = ({ item }) => (
         <TouchableOpacity
             style={[styles.leadCard, shadows.sm]}
-            onPress={() => navigation.navigate('LeadDetail', { leadId: item.id })}
+            onPress={() => navigation.navigate('LeadDetail', { leadId: item.inquiry_id || item.id })}
             activeOpacity={0.7}
         >
             {/* Avatar and Basic Info */}
@@ -136,7 +136,7 @@ const LeadsScreen = ({ navigation }) => {
             <View style={styles.cardFooter}>
                 <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={() => navigation.navigate('LeadDetail', { leadId: item.id })}
+                    onPress={() => navigation.navigate('LeadDetail', { leadId: item.inquiry_id || item.id })}
                 >
                     <Text style={styles.actionText}>View Details</Text>
                     <Ionicons name="chevron-forward" size={16} color={colors.primary} />

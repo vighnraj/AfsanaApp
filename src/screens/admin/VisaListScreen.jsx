@@ -19,6 +19,7 @@ import visaApi from '../../api/visaApi';
 import FilterDropdown from '../../components/common/FilterDropdown';
 import { VISA_STAGES } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const VisaListScreen = ({ navigation }) => {
     const { user } = useAuth();
@@ -156,7 +157,10 @@ const styles = StyleSheet.create({
     filterSection: { padding: spacing.md, backgroundColor: colors.white, borderBottomWidth: 1, borderBottomColor: colors.gray100 },
     searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.gray100, borderRadius: borderRadius.md, paddingHorizontal: spacing.sm, height: 40, marginBottom: spacing.sm },
     searchInput: { flex: 1, marginLeft: spacing.sm, fontSize: fontSizes.sm, color: colors.text },
-    list: { padding: spacing.md },
+    list: {
+        padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
+    },
     card: { backgroundColor: colors.white, borderRadius: borderRadius.lg, padding: spacing.md, marginBottom: spacing.md },
     cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: spacing.sm },
     userInfo: { flex: 1 },

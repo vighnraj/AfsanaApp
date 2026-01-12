@@ -16,6 +16,7 @@ import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { showToast } from '../../components/common/Toast';
 import { CustomHeader } from '../../components/common';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 
 const MoreScreen = ({ navigation }) => {
     const { user, logout } = useAuth();
@@ -66,8 +67,8 @@ const MoreScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.safeArea}>
-            <CustomHeader title="More" showBack={false} />
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+            <CustomHeader title="More" showBack={false} useSafeArea={false} />
 
             <ScrollView
                 style={styles.container}
@@ -121,7 +122,7 @@ const MoreScreen = ({ navigation }) => {
 
                 <Text style={styles.version}>Version 1.0.0</Text>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: spacing.md,
-        paddingBottom: spacing.xxl,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     userCard: {
         backgroundColor: colors.white,

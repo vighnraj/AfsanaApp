@@ -19,10 +19,12 @@ import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
-import { VISA_STAGES } from '../../utils/constants';
+import { VISA_STAGES, BOTTOM_TAB_SPACING } from '../../utils/constants';
 import { CustomHeader, NotificationBell } from '../../components/common';
+import { useScrollToHideTabs } from '../../hooks/useScrollToHideTabs';
 
 const DashboardVisaScreen = ({ navigation }) => {
+    const { onScroll } = useScrollToHideTabs(navigation);
     const { user, logout } = useAuth();
 
     const [loading, setLoading] = useState(true);
@@ -147,12 +149,14 @@ const DashboardVisaScreen = ({ navigation }) => {
 
     return (
         // Fixed syntax
-        <View style={styles.safeArea}>
-            <CustomHeader title="Visa Journey" showBack={false} rightAction={<NotificationBell />} />
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+            <CustomHeader title="Visa Journey" showBack={false} rightAction={<NotificationBell />} useSafeArea={false} />
             <ScrollView
                 style={styles.container}
-                contentContainerStyle={[styles.content, { paddingBottom: 80 }]}
+                contentContainerStyle={[styles.content, { paddingBottom: BOTTOM_TAB_SPACING }]}
                 showsVerticalScrollIndicator={false}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -284,7 +288,7 @@ const DashboardVisaScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     );
 };
 

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createProcessor } from '../../api/userApi';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { Button, Input, CustomHeader } from '../../components/common';
 import { showToast } from '../../components/common/Toast';
@@ -119,7 +120,10 @@ const AddProcessorScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     safeArea: { flex: 1, backgroundColor: colors.background },
-    content: { padding: spacing.md },
+    content: {
+        padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
+    },
     formCard: { backgroundColor: colors.white, borderRadius: borderRadius.lg, padding: spacing.lg },
     formTitle: { fontSize: fontSizes.lg, fontWeight: '600', color: colors.text, marginBottom: spacing.md },
     submitButton: { marginTop: spacing.sm },

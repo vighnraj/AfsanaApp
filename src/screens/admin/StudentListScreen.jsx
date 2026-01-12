@@ -13,13 +13,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { CustomHeader } from '../../components/common';
 
 import { getAllStudents, deleteStudent } from '../../api/studentApi';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
+import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
 import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable, getInitials } from '../../utils/formatting';
-import CustomHeader from '../../components/common/CustomHeader';
 
 const StudentListScreen = ({ navigation }) => {
     const [students, setStudents] = useState([]);
@@ -156,20 +157,15 @@ const StudentListScreen = ({ navigation }) => {
 
     if (loading) {
         return (
-            <View style={styles.safeArea}>
-                <CustomHeader title="Students" showBack={false} />
+            <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
                 <LoadingSpinner />
-            </View>
+            </SafeAreaView>
         );
     }
 
     return (
-        <View style={styles.safeArea}>
-            <CustomHeader
-                title="Students"
-                subtitle={`${students.length} total`}
-                showBack={false}
-            />
+        <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
+            <CustomHeader title="Students" showBack={false} />
 
             {/* Search Bar */}
             <View style={styles.searchContainer}>
@@ -220,7 +216,7 @@ const StudentListScreen = ({ navigation }) => {
             >
                 <Ionicons name="add" size={30} color={colors.white} />
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -273,6 +269,7 @@ const styles = StyleSheet.create({
     listContent: {
         padding: spacing.md,
         paddingTop: 0,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     studentCard: {
         backgroundColor: colors.white,
@@ -354,7 +351,7 @@ const styles = StyleSheet.create({
     fab: {
         position: 'absolute',
         right: spacing.lg,
-        bottom: 80, // Lifted for floating tabs
+        bottom: BOTTOM_TAB_HEIGHT + 20, // Lifted for floating tabs
         width: 60,
         height: 60,
         borderRadius: 30,

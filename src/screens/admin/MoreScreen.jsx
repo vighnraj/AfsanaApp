@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context/ThemeContext';
 import { showToast } from '../../components/common/Toast';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 import CustomHeader from '../../components/common/CustomHeader';
 
 const MoreScreen = ({ navigation }) => {
@@ -38,10 +39,20 @@ const MoreScreen = ({ navigation }) => {
             ],
         },
         {
+            title: 'Staff & University Management',
+            items: [
+                { icon: 'school', label: 'University Management', screen: 'UniversityManagement', color: colors.primary },
+                { icon: 'people-circle', label: 'Counselor Management', screen: 'CounselorManagement', color: colors.info },
+                { icon: 'briefcase', label: 'Processor Management', screen: 'ProcessorManagement', color: colors.success },
+                { icon: 'person-circle', label: 'Staff Management', screen: 'StaffManagement', color: colors.warning },
+            ],
+        },
+        {
             title: 'Operations',
             items: [
                 { icon: 'checkbox', label: 'Task Management', screen: 'Tasks', color: colors.warning },
-                { icon: 'airplane', label: 'Visa Processing', screen: 'VisaList', color: colors.info },
+                { icon: 'airplane', label: 'Visa Process Management', screen: 'VisaProcessManagement', color: colors.info },
+                { icon: 'list', label: 'Visa Processing List', screen: 'VisaList', color: colors.secondary },
                 { icon: 'card', label: 'Payments & Invoices', screen: 'Payments', color: colors.secondary },
                 { icon: 'document', label: 'Application Tracker', screen: 'ApplicationTracker', color: colors.primary },
                 { icon: 'school', label: 'University Submissions', screen: 'UniversitySubmissions', color: colors.success },
@@ -169,7 +180,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: spacing.md,
-        paddingBottom: spacing.xxl,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     userCard: {
         backgroundColor: colors.white,

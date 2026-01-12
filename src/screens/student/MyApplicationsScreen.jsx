@@ -18,9 +18,12 @@ import { colors, spacing, borderRadius, fontSizes, shadows } from '../../context
 import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import { formatDateReadable } from '../../utils/formatting';
+import { BOTTOM_TAB_SPACING } from '../../utils/constants';
 import { CustomHeader } from '../../components/common';
+import { useScrollToHideTabs } from '../../hooks/useScrollToHideTabs';
 
 const MyApplicationsScreen = ({ navigation }) => {
+    const { onScroll } = useScrollToHideTabs(navigation);
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -120,14 +123,16 @@ const MyApplicationsScreen = ({ navigation }) => {
     }
 
     return (
-        <View style={styles.safeArea}>
-
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+            <CustomHeader title="Applications" showBack={false} useSafeArea={false} />
             <FlatList
                 data={applications}
                 keyExtractor={(item) => item.id?.toString()}
                 renderItem={renderApplicationItem}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
+                onScroll={onScroll}
+                scrollEventThrottle={16}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -139,7 +144,7 @@ const MyApplicationsScreen = ({ navigation }) => {
                     </View>
                 }
             />
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -167,6 +172,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: spacing.md,
+        paddingBottom: BOTTOM_TAB_SPACING,
     },
     applicationCard: {
         backgroundColor: colors.white,
