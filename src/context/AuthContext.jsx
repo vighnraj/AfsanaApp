@@ -3,6 +3,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { login as apiLogin, signup as apiSignup, saveAuthData, getStoredAuthData, logout as apiLogout } from '../api/authApi';
 import { checkIdleTimeout } from '../api';
+import notificationService from '../services/notificationService';
 
 // Create context
 const AuthContext = createContext(null);
@@ -70,6 +71,14 @@ export const AuthProvider = ({ children }) => {
                 if (authData) {
                     setPermissions(authData.permissions || []);
                     setUserPermissions(authData.userPermissions || []);
+                }
+
+                // Register device for push notifications
+                try {
+                    const userId = userData.user_id || userData.id;
+                    await notificationService.registerDeviceToken(userId);
+                } catch (notifError) {
+                    console.log('Push notification registration skipped:', notifError);
                 }
 
                 return { success: true, role: userData.role };

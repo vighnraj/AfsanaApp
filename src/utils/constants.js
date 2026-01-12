@@ -135,6 +135,7 @@ export const INQUIRY_TYPE_OPTIONS = LEAD_TYPE_OPTIONS;
 export const EDUCATION_LEVEL_OPTIONS = [
     { value: 'ssc', label: 'SSC' },
     { value: 'hsc', label: 'HSC' },
+    { value: 'diploma', label: 'Diploma' },
     { value: 'bachelor', label: 'Bachelor' },
     { value: 'master', label: 'Master' },
 ];
@@ -143,8 +144,76 @@ export const EDUCATION_LEVEL_OPTIONS = [
 export const TEST_TYPE_OPTIONS = [
     { value: 'ielts', label: 'IELTS' },
     { value: 'toefl', label: 'TOEFL' },
+    { value: 'pte', label: 'PTE' },
+    { value: 'pte_core', label: 'PTE Core' },
+    { value: 'pte_academic', label: 'PTE Academic' },
     { value: 'duolingo', label: 'Duolingo' },
+    { value: 'other', label: 'Other' },
     { value: 'no_test', label: 'No Test Yet' },
+];
+
+// Study Level options
+export const STUDY_LEVEL_OPTIONS = [
+    { value: 'undergraduate', label: 'Undergraduate' },
+    { value: 'postgraduate', label: 'Postgraduate' },
+    { value: 'diploma', label: 'Diploma' },
+    { value: 'certificate', label: 'Certificate' },
+    { value: 'doctorate', label: 'Doctorate/PhD' },
+    { value: 'foundation', label: 'Foundation' },
+    { value: 'language', label: 'Language Course' },
+];
+
+// Study Field options
+export const STUDY_FIELD_OPTIONS = [
+    { value: 'business', label: 'Business & Management' },
+    { value: 'engineering', label: 'Engineering & Technology' },
+    { value: 'computer_science', label: 'Computer Science & IT' },
+    { value: 'medicine', label: 'Medicine & Health Sciences' },
+    { value: 'arts', label: 'Arts & Humanities' },
+    { value: 'law', label: 'Law' },
+    { value: 'science', label: 'Natural Sciences' },
+    { value: 'social_science', label: 'Social Sciences' },
+    { value: 'education', label: 'Education' },
+    { value: 'hospitality', label: 'Hospitality & Tourism' },
+    { value: 'agriculture', label: 'Agriculture' },
+    { value: 'other', label: 'Other' },
+];
+
+// Medium of Instruction options
+export const MEDIUM_OF_INSTRUCTION_OPTIONS = [
+    { value: 'english', label: 'English' },
+    { value: 'bangla', label: 'Bangla' },
+    { value: 'both', label: 'Both English & Bangla' },
+    { value: 'other', label: 'Other' },
+];
+
+// Country codes for phone numbers
+export const COUNTRY_CODES = [
+    { code: '+880', country: 'Bangladesh', flag: '🇧🇩' },
+    { code: '+91', country: 'India', flag: '🇮🇳' },
+    { code: '+92', country: 'Pakistan', flag: '🇵🇰' },
+    { code: '+977', country: 'Nepal', flag: '🇳🇵' },
+    { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' },
+    { code: '+1', country: 'USA/Canada', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+61', country: 'Australia', flag: '🇦🇺' },
+    { code: '+49', country: 'Germany', flag: '🇩🇪' },
+    { code: '+33', country: 'France', flag: '🇫🇷' },
+    { code: '+971', country: 'UAE', flag: '🇦🇪' },
+    { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
+    { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
+    { code: '+974', country: 'Qatar', flag: '🇶🇦' },
+    { code: '+973', country: 'Bahrain', flag: '🇧🇭' },
+    { code: '+968', country: 'Oman', flag: '🇴🇲' },
+    { code: '+60', country: 'Malaysia', flag: '🇲🇾' },
+    { code: '+65', country: 'Singapore', flag: '🇸🇬' },
+    { code: '+82', country: 'South Korea', flag: '🇰🇷' },
+    { code: '+81', country: 'Japan', flag: '🇯🇵' },
+    { code: '+86', country: 'China', flag: '🇨🇳' },
+    { code: '+39', country: 'Italy', flag: '🇮🇹' },
+    { code: '+34', country: 'Spain', flag: '🇪🇸' },
+    { code: '+31', country: 'Netherlands', flag: '🇳🇱' },
+    { code: '+36', country: 'Hungary', flag: '🇭🇺' },
 ];
 
 // Branch options
@@ -247,6 +316,10 @@ export default {
     INQUIRY_TYPE_OPTIONS,
     EDUCATION_LEVEL_OPTIONS,
     TEST_TYPE_OPTIONS,
+    STUDY_LEVEL_OPTIONS,
+    STUDY_FIELD_OPTIONS,
+    MEDIUM_OF_INSTRUCTION_OPTIONS,
+    COUNTRY_CODES,
     BRANCH_OPTIONS,
     FOLLOW_UP_PRESETS,
     SORT_OPTIONS,

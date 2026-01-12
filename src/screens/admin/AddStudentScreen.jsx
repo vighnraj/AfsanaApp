@@ -31,8 +31,20 @@ const AddStudentScreen = ({ navigation, route }) => {
         { id: 2, label: 'Professional', icon: 'briefcase' },
         { id: 3, label: 'Travel', icon: 'airplane' },
         { id: 4, label: 'Sponsor', icon: 'people' },
-        { id: 5, label: 'Cover Letter', icon: 'document-text' },
+        { id: 5, label: 'Education', icon: 'school' },
+        { id: 6, label: 'EPT Scores', icon: 'language' },
+        { id: 7, label: 'Cover Letter', icon: 'document-text' },
     ];
+
+    // Education History (dynamic array)
+    const [educationHistory, setEducationHistory] = useState([
+        { institute_name: '', degree: '', group_department: '', result: '', start_date: '', end_date: '', status: 'Pass' }
+    ]);
+
+    // EPT Scores (dynamic array)
+    const [eptScores, setEptScores] = useState([
+        { ept_name: '', expiry_date: new Date(), overall_score: '', listening: '', reading: '', speaking: '', writing: '' }
+    ]);
 
     // Form State - All 60+ fields
     const [formData, setFormData] = useState({
@@ -192,6 +204,19 @@ const AddStudentScreen = ({ navigation, route }) => {
                 study_gap_explanation: student.study_gap_explanation || '',
                 deportation_details: student.deportation_details || '',
             });
+
+            // Load education history if available
+            if (Array.isArray(student.education_history) && student.education_history.length > 0) {
+                setEducationHistory(student.education_history);
+            }
+
+            // Load EPT scores if available
+            if (Array.isArray(student.ept_scores) && student.ept_scores.length > 0) {
+                setEptScores(student.ept_scores.map(ept => ({
+                    ...ept,
+                    expiry_date: ept.expiry_date ? new Date(ept.expiry_date) : new Date()
+                })));
+            }
         }
     }, []);
 
@@ -210,6 +235,46 @@ const AddStudentScreen = ({ navigation, route }) => {
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // Education History handlers
+    const handleEducationChange = (index, field, value) => {
+        const updated = [...educationHistory];
+        updated[index][field] = value;
+        setEducationHistory(updated);
+    };
+
+    const addEducationRow = () => {
+        setEducationHistory([
+            ...educationHistory,
+            { institute_name: '', degree: '', group_department: '', result: '', start_date: '', end_date: '', status: 'Pass' }
+        ]);
+    };
+
+    const removeEducationRow = (index) => {
+        if (educationHistory.length > 1) {
+            setEducationHistory(educationHistory.filter((_, i) => i !== index));
+        }
+    };
+
+    // EPT Scores handlers
+    const handleEptChange = (index, field, value) => {
+        const updated = [...eptScores];
+        updated[index][field] = value;
+        setEptScores(updated);
+    };
+
+    const addEptRow = () => {
+        setEptScores([
+            ...eptScores,
+            { ept_name: '', expiry_date: new Date(), overall_score: '', listening: '', reading: '', speaking: '', writing: '' }
+        ]);
+    };
+
+    const removeEptRow = (index) => {
+        if (eptScores.length > 1) {
+            setEptScores(eptScores.filter((_, i) => i !== index));
+        }
     };
 
     const formatDateForAPI = (date) => {
@@ -313,6 +378,15 @@ const AddStudentScreen = ({ navigation, route }) => {
                 name_age_mismatch: formData.name_age_mismatch,
                 study_gap_explanation: formData.study_gap_explanation,
                 deportation_details: formData.deportation_details,
+
+                // Education History
+                education_history: educationHistory.filter(edu => edu.institute_name || edu.degree),
+
+                // EPT Scores
+                ept_scores: eptScores.filter(ept => ept.ept_name).map(ept => ({
+                    ...ept,
+                    expiry_date: formatDateForAPI(ept.expiry_date)
+                })),
             };
 
             if (isEditMode) {
@@ -593,7 +667,239 @@ const AddStudentScreen = ({ navigation, route }) => {
                     </View>
                 );
 
-            case 5: // Cover Letter Info
+            case 5: // Education History
+                return (
+                    <View>
+                        <Text style={styles.sectionTitle}>Applicant Education History</Text>
+                        <Text style={styles.helperText}>
+                            Add all educational qualifications from highest to lowest level.
+                        </Text>
+
+                        {educationHistory.map((edu, index) => (
+                            <View key={index} style={styles.dynamicCard}>
+                                <View style={styles.dynamicCardHeader}>
+                                    <Text style={styles.dynamicCardTitle}>Education #{index + 1}</Text>
+                                    {educationHistory.length > 1 && (
+                                        <TouchableOpacity onPress={() => removeEducationRow(index)}>
+                                            <Ionicons name="trash-outline" size={20} color={colors.danger} />
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.label}>Institute Name</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="University/College Name"
+                                        value={edu.institute_name}
+                                        onChangeText={(val) => handleEducationChange(index, 'institute_name', val)}
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.label}>Degree/Certificate</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="e.g., BSc, HSC, SSC"
+                                        value={edu.degree}
+                                        onChangeText={(val) => handleEducationChange(index, 'degree', val)}
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.label}>Group/Department</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="e.g., Science, Commerce, CSE"
+                                        value={edu.group_department}
+                                        onChangeText={(val) => handleEducationChange(index, 'group_department', val)}
+                                    />
+                                </View>
+
+                                <View style={{ flexDirection: 'row', gap: 12 }}>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.label}>Result/GPA</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder="e.g., 3.85"
+                                                value={edu.result}
+                                                onChangeText={(val) => handleEducationChange(index, 'result', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <FilterDropdown
+                                            label="Status"
+                                            value={edu.status}
+                                            options={[
+                                                { value: 'Pass', label: 'Pass' },
+                                                { value: 'Fail', label: 'Fail' },
+                                                { value: 'Retake', label: 'Retake' },
+                                                { value: 'Withdraw', label: 'Withdraw' },
+                                                { value: 'Ongoing', label: 'Ongoing' }
+                                            ]}
+                                            onChange={(val) => handleEducationChange(index, 'status', val)}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', gap: 12 }}>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.label}>Start Date</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder="e.g., 2018"
+                                                value={edu.start_date}
+                                                onChangeText={(val) => handleEducationChange(index, 'start_date', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.label}>End Date</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder="e.g., 2022"
+                                                value={edu.end_date}
+                                                onChangeText={(val) => handleEducationChange(index, 'end_date', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+
+                        <TouchableOpacity style={styles.addButton} onPress={addEducationRow}>
+                            <Ionicons name="add-circle-outline" size={24} color={colors.primary} />
+                            <Text style={styles.addButtonText}>Add More Education</Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+
+            case 6: // EPT Scores
+                return (
+                    <View>
+                        <Text style={styles.sectionTitle}>English Proficiency Test Scores</Text>
+                        <Text style={styles.helperText}>
+                            Add IELTS, TOEFL, PTE, Duolingo or other English test scores.
+                        </Text>
+
+                        {eptScores.map((ept, index) => (
+                            <View key={index} style={styles.dynamicCard}>
+                                <View style={styles.dynamicCardHeader}>
+                                    <Text style={styles.dynamicCardTitle}>Test #{index + 1}</Text>
+                                    {eptScores.length > 1 && (
+                                        <TouchableOpacity onPress={() => removeEptRow(index)}>
+                                            <Ionicons name="trash-outline" size={20} color={colors.danger} />
+                                        </TouchableOpacity>
+                                    )}
+                                </View>
+
+                                <FilterDropdown
+                                    label="Test Type"
+                                    value={ept.ept_name}
+                                    options={[
+                                        { value: 'IELTS', label: 'IELTS' },
+                                        { value: 'TOEFL', label: 'TOEFL' },
+                                        { value: 'PTE', label: 'PTE' },
+                                        { value: 'PTE Core', label: 'PTE Core' },
+                                        { value: 'PTE Academic', label: 'PTE Academic' },
+                                        { value: 'Duolingo', label: 'Duolingo' },
+                                        { value: 'Other', label: 'Other' }
+                                    ]}
+                                    onChange={(val) => handleEptChange(index, 'ept_name', val)}
+                                />
+
+                                <View style={{ flexDirection: 'row', gap: 12 }}>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.label}>Overall Score</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder="e.g., 7.0"
+                                                keyboardType="numeric"
+                                                value={ept.overall_score}
+                                                onChangeText={(val) => handleEptChange(index, 'overall_score', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.label}>Expiry Date</Text>
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder="YYYY-MM-DD"
+                                                value={formatDateForAPI(ept.expiry_date)}
+                                                onChangeText={(val) => handleEptChange(index, 'expiry_date', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+
+                                <Text style={[styles.label, { marginTop: spacing.sm, marginBottom: spacing.xs }]}>Individual Scores</Text>
+                                <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                                    <View style={{ flex: 1, minWidth: '45%' }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.smallLabel}>Listening</Text>
+                                            <TextInput
+                                                style={styles.smallInput}
+                                                placeholder="L"
+                                                keyboardType="numeric"
+                                                value={ept.listening}
+                                                onChangeText={(val) => handleEptChange(index, 'listening', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: '45%' }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.smallLabel}>Reading</Text>
+                                            <TextInput
+                                                style={styles.smallInput}
+                                                placeholder="R"
+                                                keyboardType="numeric"
+                                                value={ept.reading}
+                                                onChangeText={(val) => handleEptChange(index, 'reading', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: '45%' }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.smallLabel}>Speaking</Text>
+                                            <TextInput
+                                                style={styles.smallInput}
+                                                placeholder="S"
+                                                keyboardType="numeric"
+                                                value={ept.speaking}
+                                                onChangeText={(val) => handleEptChange(index, 'speaking', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: '45%' }}>
+                                        <View style={styles.inputContainer}>
+                                            <Text style={styles.smallLabel}>Writing</Text>
+                                            <TextInput
+                                                style={styles.smallInput}
+                                                placeholder="W"
+                                                keyboardType="numeric"
+                                                value={ept.writing}
+                                                onChangeText={(val) => handleEptChange(index, 'writing', val)}
+                                            />
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+
+                        <TouchableOpacity style={styles.addButton} onPress={addEptRow}>
+                            <Ionicons name="add-circle-outline" size={24} color={colors.primary} />
+                            <Text style={styles.addButtonText}>Add More Test Scores</Text>
+                        </TouchableOpacity>
+                    </View>
+                );
+
+            case 7: // Cover Letter Info
                 return (
                     <View>
                         <Text style={styles.sectionTitle}>Information for Cover Letter</Text>
@@ -800,6 +1106,62 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 16,
         fontWeight: '700',
+    },
+    // Dynamic card styles for Education & EPT
+    dynamicCard: {
+        backgroundColor: colors.gray50,
+        borderRadius: borderRadius.md,
+        padding: spacing.md,
+        marginBottom: spacing.md,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+    },
+    dynamicCardHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: spacing.md,
+        paddingBottom: spacing.sm,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.gray200,
+    },
+    dynamicCardTitle: {
+        fontSize: fontSizes.md,
+        fontWeight: '700',
+        color: colors.primary,
+    },
+    addButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: spacing.md,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderColor: colors.primary,
+        borderRadius: borderRadius.md,
+        marginTop: spacing.sm,
+    },
+    addButtonText: {
+        color: colors.primary,
+        fontSize: fontSizes.md,
+        fontWeight: '600',
+        marginLeft: spacing.xs,
+    },
+    smallLabel: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: colors.textSecondary,
+        marginBottom: 4,
+    },
+    smallInput: {
+        backgroundColor: colors.white,
+        borderRadius: borderRadius.sm,
+        padding: spacing.sm,
+        fontSize: 14,
+        color: colors.text,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        textAlign: 'center',
     },
 });
 

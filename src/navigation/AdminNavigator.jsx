@@ -25,12 +25,17 @@ import AddProcessorScreen from '../screens/admin/AddProcessorScreen';
 import RolesManagementScreen from '../screens/admin/RolesManagementScreen';
 import PermissionsScreen from '../screens/admin/PermissionsScreen';
 
+// Chat Screens
+import ChatListScreen from '../screens/chat/ChatListScreen';
+import ChatBoxScreen from '../screens/chat/ChatBoxScreen';
+
 // BATCH 3: Reporting & Analytics - REMOVED FOR BETA VERSION (only basic dashboard kept)
 
 // BATCH 4: Application & Payment
 import ApplicationTrackerScreen from '../screens/admin/ApplicationTrackerScreen';
 import UniversitySubmissionsScreen from '../screens/admin/UniversitySubmissionsScreen';
 import InvoiceDownloadScreen from '../screens/admin/InvoiceDownloadScreen';
+import CreateInvoiceScreen from '../screens/admin/CreateInvoiceScreen';
 
 // BATCH 5: Additional Features
 import BranchManagementScreen from '../screens/admin/BranchManagementScreen';
@@ -98,12 +103,17 @@ const MoreStack = () => (
         <Stack.Screen name="Permissions" component={PermissionsScreen} options={{ title: 'Configure Permissions' }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
 
+        {/* Chat Screens */}
+        <Stack.Screen name="ChatList" component={ChatListScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ChatBox" component={ChatBoxScreen} options={{ headerShown: false }} />
+
         {/* BATCH 3: Reporting & Analytics - REMOVED FOR BETA VERSION */}
 
         {/* BATCH 4: Application & Payment */}
         <Stack.Screen name="ApplicationTracker" component={ApplicationTrackerScreen} options={{ headerShown: false }} />
         <Stack.Screen name="UniversitySubmissions" component={UniversitySubmissionsScreen} options={{ headerShown: false }} />
         <Stack.Screen name="InvoiceDownload" component={InvoiceDownloadScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="CreateInvoice" component={CreateInvoiceScreen} options={{ headerShown: false }} />
 
         {/* BATCH 5: Additional Features */}
         <Stack.Screen name="BranchManagement" component={BranchManagementScreen} options={{ headerShown: false }} />

@@ -59,7 +59,9 @@ import { LoadingSpinner } from '../../components/common/Loading';
 import { showToast } from '../../components/common/Toast';
 import CustomHeader from '../../components/common/CustomHeader';
 import NotificationBell from '../../components/common/NotificationBell';
-import { BOTTOM_TAB_SPACING } from '../../utils/constants';
+import FilterDropdown from '../../components/common/FilterDropdown';
+import { BOTTOM_TAB_SPACING, DATE_RANGE_OPTIONS, BRANCH_OPTIONS } from '../../utils/constants';
+import { getCounselors } from '../../api/userApi';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -69,9 +71,30 @@ const DashboardScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
+    const [counselors, setCounselors] = useState([]);
+    const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({
-        dateRange: '',
+        dateRange: 'all',
+        counselor_id: '',
+        branch: '',
     });
+
+    useEffect(() => {
+        // Fetch counselors for filter
+        const loadCounselors = async () => {
+            try {
+                const data = await getCounselors();
+                const formatted = (data.data || data || []).map(c => ({
+                    value: c.id.toString(),
+                    label: c.full_name
+                }));
+                setCounselors(formatted);
+            } catch (err) {
+                console.error('Load counselors error:', err);
+            }
+        };
+        loadCounselors();
+    }, []);
 
     const fetchDashboardData = useCallback(async () => {
         try {
@@ -168,9 +191,68 @@ const DashboardScreen = ({ navigation }) => {
             >
                 {/* User Greeting */}
                 <View style={styles.subHeader}>
-                    <Text style={styles.greeting}>Hello, {user?.full_name || 'Administrator'}</Text>
-                    <Text style={styles.subGreeting}>Here's what's happening today.</Text>
+                    <View style={styles.greetingRow}>
+                        <View>
+                            <Text style={styles.greeting}>Hello, {user?.full_name || 'Administrator'}</Text>
+                            <Text style={styles.subGreeting}>Here's what's happening today.</Text>
+                        </View>
+                        <TouchableOpacity
+                            style={[styles.filterToggleBtn, showFilters && styles.filterToggleBtnActive]}
+                            onPress={() => setShowFilters(!showFilters)}
+                        >
+                            <Ionicons name="filter" size={18} color={showFilters ? colors.white : colors.primary} />
+                            <Text style={[styles.filterToggleText, showFilters && styles.filterToggleTextActive]}>Filters</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
+                {/* Filters Section */}
+                {showFilters && (
+                    <View style={[styles.filterCard, shadows.sm]}>
+                        <View style={styles.filterRow}>
+                            <View style={styles.filterItem}>
+                                <FilterDropdown
+                                    label="Date Range"
+                                    value={filters.dateRange}
+                                    options={[
+                                        { value: 'all', label: 'All Time' },
+                                        { value: 'today', label: 'Today' },
+                                        { value: 'week', label: 'This Week' },
+                                        { value: 'month', label: 'This Month' },
+                                        { value: 'quarter', label: 'This Quarter' },
+                                        { value: 'year', label: 'This Year' },
+                                    ]}
+                                    onChange={(val) => setFilters(prev => ({ ...prev, dateRange: val }))}
+                                />
+                            </View>
+                            <View style={styles.filterItem}>
+                                <FilterDropdown
+                                    label="Counselor"
+                                    value={filters.counselor_id}
+                                    options={[{ value: '', label: 'All Counselors' }, ...counselors]}
+                                    onChange={(val) => setFilters(prev => ({ ...prev, counselor_id: val }))}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.filterRow}>
+                            <View style={styles.filterItem}>
+                                <FilterDropdown
+                                    label="Branch"
+                                    value={filters.branch}
+                                    options={[{ value: '', label: 'All Branches' }, ...BRANCH_OPTIONS.map(b => ({ value: b, label: b }))]}
+                                    onChange={(val) => setFilters(prev => ({ ...prev, branch: val }))}
+                                />
+                            </View>
+                            <TouchableOpacity
+                                style={styles.clearFiltersBtn}
+                                onPress={() => setFilters({ dateRange: 'all', counselor_id: '', branch: '' })}
+                            >
+                                <Ionicons name="refresh" size={16} color={colors.textSecondary} />
+                                <Text style={styles.clearFiltersText}>Clear All</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
 
                 {/* Growth Banner */}
                 <View style={[styles.growthBanner, shadows.lg]}>
@@ -283,8 +365,38 @@ const styles = StyleSheet.create({
     container: { flex: 1 },
     content: { padding: spacing.md, paddingBottom: 80 },
     subHeader: { marginBottom: spacing.md },
+    greetingRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     greeting: { fontSize: fontSizes.h3, fontWeight: '700', color: colors.text },
     subGreeting: { fontSize: fontSizes.sm, color: colors.textSecondary },
+    filterToggleBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: borderRadius.full,
+        backgroundColor: colors.white,
+        borderWidth: 1,
+        borderColor: colors.primary,
+    },
+    filterToggleBtnActive: { backgroundColor: colors.primary },
+    filterToggleText: { marginLeft: 6, fontSize: fontSizes.sm, fontWeight: '600', color: colors.primary },
+    filterToggleTextActive: { color: colors.white },
+    filterCard: {
+        backgroundColor: colors.white,
+        borderRadius: borderRadius.lg,
+        padding: spacing.md,
+        marginBottom: spacing.md,
+    },
+    filterRow: { flexDirection: 'row', marginBottom: spacing.sm },
+    filterItem: { flex: 1, marginRight: spacing.sm },
+    clearFiltersBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        paddingVertical: spacing.md,
+    },
+    clearFiltersText: { marginLeft: 6, fontSize: fontSizes.sm, color: colors.textSecondary },
     growthBanner: {
         backgroundColor: colors.primary,
         borderRadius: borderRadius.lg,

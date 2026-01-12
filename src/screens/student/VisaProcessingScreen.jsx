@@ -431,19 +431,51 @@ const VisaProcessingScreen = ({ navigation, route }) => {
                 return (
                     <View style={styles.stageCard}>
                         <Text style={styles.stageTitle}>Embassy Documents</Text>
-                        {['motivation_letter', 'europass_cv', 'bank_statement', 'birth_certificate', 'police_clearance'].map(docKey => (
-                            <TouchableOpacity key={docKey} style={styles.docRow} onPress={() => pickDocument(docKey)}>
-                                <View style={styles.docInfo}>
-                                    <Ionicons name="folder-open-outline" size={24} color={colors.primary} />
-                                    <Text style={styles.docLabel}>{docKey.replace('_', ' ').toUpperCase()}</Text>
+                        <Text style={styles.stageDesc}>Upload all required embassy documents for visa processing.</Text>
+                        {[
+                            { key: 'motivation_letter', label: 'Motivation Letter', icon: 'document-text-outline' },
+                            { key: 'europass_cv', label: 'Europass CV', icon: 'person-outline' },
+                            { key: 'bank_statement', label: 'Bank Statement', icon: 'cash-outline' },
+                            { key: 'birth_certificate', label: 'Birth Certificate', icon: 'document-outline' },
+                            { key: 'tax_proof', label: 'Tax Proof', icon: 'receipt-outline' },
+                            { key: 'business_docs', label: 'Business Documents', icon: 'briefcase-outline' },
+                            { key: 'ca_certificate', label: 'CA Certificate', icon: 'ribbon-outline' },
+                            { key: 'health_insurance', label: 'Health Insurance', icon: 'medkit-outline' },
+                            { key: 'residence_form', label: 'Residence Form', icon: 'home-outline' },
+                            { key: 'flight_booking', label: 'Flight Booking', icon: 'airplane-outline' },
+                            { key: 'police_clearance', label: 'Police Clearance', icon: 'shield-checkmark-outline' },
+                            { key: 'family_certificate', label: 'Family Certificate', icon: 'people-outline' },
+                            { key: 'application_form', label: 'Application Form', icon: 'clipboard-outline' },
+                        ].map(doc => (
+                            <View key={doc.key} style={styles.docContainer}>
+                                <TouchableOpacity style={styles.docRow} onPress={() => pickDocument(doc.key)}>
+                                    <View style={styles.docInfo}>
+                                        <Ionicons name={doc.icon} size={24} color={colors.primary} />
+                                        <Text style={styles.docLabel}>{doc.label}</Text>
+                                    </View>
+                                    <View style={styles.docStatus}>
+                                        <Text style={[styles.statusTag, { backgroundColor: formData[doc.key] ? colors.success + '15' : colors.gray100 }]}>
+                                            {formData[doc.key] ? 'Uploaded' : 'Pending'}
+                                        </Text>
+                                        <Ionicons name="chevron-forward" size={16} color={colors.gray400} />
+                                    </View>
+                                </TouchableOpacity>
+                                {/* Document Status Dropdown */}
+                                <View style={styles.statusRow}>
+                                    <Text style={styles.statusLabel}>Status:</Text>
+                                    <FilterDropdown
+                                        value={formData[`${doc.key}_status`] || 'Pending'}
+                                        options={[
+                                            { value: 'Pending', label: 'Pending' },
+                                            { value: 'Uploaded', label: 'Uploaded' },
+                                            { value: 'Under Review', label: 'Under Review' },
+                                            { value: 'Approved', label: 'Approved' },
+                                            { value: 'Rejected', label: 'Rejected' }
+                                        ]}
+                                        onChange={(val) => handleInputChange(`${doc.key}_status`, val)}
+                                    />
                                 </View>
-                                <View style={styles.docStatus}>
-                                    <Text style={[styles.statusTag, { backgroundColor: formData[docKey] ? colors.success + '15' : colors.gray100 }]}>
-                                        {formData[docKey] ? 'Uploaded' : 'Pending'}
-                                    </Text>
-                                    <Ionicons name="chevron-forward" size={16} color={colors.gray400} />
-                                </View>
-                            </TouchableOpacity>
+                            </View>
                         ))}
                     </View>
                 );

@@ -27,6 +27,7 @@ const MoreScreen = ({ navigation }) => {
             items: [
                 { icon: 'today', label: "Today's Inquiries", screen: 'TodaysInquiries', color: colors.primary },
                 { icon: 'notifications', label: 'Task & Reminders', screen: 'TaskReminders', color: colors.warning },
+                { icon: 'chatbubbles', label: 'Messages', screen: 'ChatList', color: colors.info },
             ],
         },
         {
@@ -57,6 +58,7 @@ const MoreScreen = ({ navigation }) => {
                 { icon: 'document', label: 'Application Tracker', screen: 'ApplicationTracker', color: colors.primary },
                 { icon: 'school', label: 'University Submissions', screen: 'UniversitySubmissions', color: colors.success },
                 { icon: 'receipt', label: 'Invoice Download', screen: 'InvoiceDownload', color: colors.info },
+                { icon: 'add-circle', label: 'Create Invoice', screen: 'CreateInvoice', color: colors.success },
             ],
         },
         {

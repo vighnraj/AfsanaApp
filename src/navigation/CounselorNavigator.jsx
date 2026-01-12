@@ -18,6 +18,10 @@ import ProfileScreen from '../screens/common/ProfileScreen';
 import VisaListScreen from '../screens/admin/VisaListScreen';
 import VisaProcessingScreen from '../screens/student/VisaProcessingScreen';
 
+// Chat Screens
+import ChatListScreen from '../screens/chat/ChatListScreen';
+import ChatBoxScreen from '../screens/chat/ChatBoxScreen';
+
 import { colors, fontSizes } from '../context/ThemeContext';
 import { getTabScreenOptions } from './navigationStyles';
 import { CustomHeader } from '../components/common';
@@ -43,8 +47,11 @@ const MoreStack = () => (
         <Stack.Screen name="Payments" component={PaymentsScreen} options={{ title: 'Student Invoices' }} />
         <Stack.Screen name="VisaList" component={VisaListScreen} options={{ title: 'Visa Processing' }} />
         <Stack.Screen name="VisaProcessing" component={VisaProcessingScreen} options={{ title: 'Process Application' }} />
-
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
+
+        {/* Chat Screens */}
+        <Stack.Screen name="ChatList" component={ChatListScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ChatBox" component={ChatBoxScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
 );
 

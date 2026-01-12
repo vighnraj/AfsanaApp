@@ -32,7 +32,10 @@ import {
     EDUCATION_LEVEL_OPTIONS,
     TEST_TYPE_OPTIONS,
     PRIORITY_OPTIONS,
-    BOTTOM_TAB_SPACING
+    BOTTOM_TAB_SPACING,
+    MEDIUM_OF_INSTRUCTION_OPTIONS,
+    COUNTRY_CODES,
+    STUDY_FIELD_OPTIONS,
 } from '../../utils/constants';
 
 const GENDER_OPTIONS = [
@@ -66,8 +69,10 @@ const AddLeadScreen = ({ navigation, route }) => {
         branch: '',
         counselor_id: '',
         priority: 'Medium',
+        date_of_inquiry: new Date(),
         full_name: '',
         email: '',
+        country_code: '+880',
         phone_number: '',
         country: '',
         city: '',
@@ -77,6 +82,7 @@ const AddLeadScreen = ({ navigation, route }) => {
         present_address: '',
         // Preferences
         course_name: '',
+        university_name: '',
         study_level: '',
         study_field: '',
         intake: '',
@@ -84,9 +90,11 @@ const AddLeadScreen = ({ navigation, route }) => {
         preferred_countries: [],
         // Academic
         highest_level: '',
+        medium_of_instruction: 'english',
         education_background: [],
         // English
         test_type: '',
+        other_test_type: '',
         overall_score: '',
         reading_score: '',
         writing_score: '',
@@ -108,6 +116,8 @@ const AddLeadScreen = ({ navigation, route }) => {
     ]);
 
     const [showDobPicker, setShowDobPicker] = useState(false);
+    const [showInquiryDatePicker, setShowInquiryDatePicker] = useState(false);
+    const [showCountryCodePicker, setShowCountryCodePicker] = useState(false);
 
     useEffect(() => {
         const loadDependencies = async () => {
@@ -123,6 +133,15 @@ const AddLeadScreen = ({ navigation, route }) => {
                     const leadRes = await getInquiryById(editLeadId);
                     const lead = leadRes.data || leadRes;
 
+                    // Extract country code from phone if stored together
+                    let countryCode = '+880';
+                    let phoneNum = lead.phone_number || lead.phone || '';
+                    const matchedCode = COUNTRY_CODES.find(c => phoneNum.startsWith(c.code));
+                    if (matchedCode) {
+                        countryCode = matchedCode.code;
+                        phoneNum = phoneNum.slice(matchedCode.code.length);
+                    }
+
                     setFormData({
                         ...formData,
                         inquiry_type: lead.inquiry_type || 'student_visa',
@@ -130,9 +149,11 @@ const AddLeadScreen = ({ navigation, route }) => {
                         branch: lead.branch || '',
                         counselor_id: lead.counselor_id ? String(lead.counselor_id) : '',
                         priority: lead.priority || 'Medium',
+                        date_of_inquiry: lead.date_of_inquiry ? new Date(lead.date_of_inquiry) : new Date(),
                         full_name: lead.full_name || lead.name || '',
                         email: lead.email || '',
-                        phone_number: lead.phone_number || lead.phone || '',
+                        country_code: countryCode,
+                        phone_number: phoneNum,
                         country: lead.country || '',
                         city: lead.city || '',
                         date_of_birth: lead.date_of_birth ? new Date(lead.date_of_birth) : new Date(),
@@ -140,14 +161,17 @@ const AddLeadScreen = ({ navigation, route }) => {
                         address: lead.address || '',
                         present_address: lead.present_address || '',
                         course_name: lead.course_name || '',
+                        university_name: lead.university_name || '',
                         study_level: lead.study_level || '',
                         study_field: lead.study_field || '',
                         intake: lead.intake || '',
                         budget: lead.budget || '',
                         preferred_countries: lead.preferred_countries || [],
                         highest_level: lead.highest_level || '',
+                        medium_of_instruction: lead.medium_of_instruction || 'english',
                         education_background: Array.isArray(lead.education_background) ? lead.education_background : [],
                         test_type: lead.test_type || '',
+                        other_test_type: lead.other_test_type || '',
                         overall_score: String(lead.overall_score || ''),
                         reading_score: String(lead.reading_score || ''),
                         writing_score: String(lead.writing_score || ''),
@@ -209,13 +233,18 @@ const AddLeadScreen = ({ navigation, route }) => {
 
         setLoading(true);
         try {
+            // Combine country code with phone number
+            const fullPhoneNumber = formData.country_code + formData.phone_number;
+
             const payload = {
                 ...formData,
                 date_of_birth: formData.date_of_birth.toISOString().split('T')[0],
+                date_of_inquiry: formData.date_of_inquiry.toISOString().split('T')[0],
                 counselor_id: formData.counselor_id || user?.id || 1,
                 education_background: educationLevels.filter(e => e.level),
-                date_of_inquiry: isEditMode ? formData.date_of_inquiry : new Date().toISOString().split('T')[0],
                 lead_status: isEditMode ? formData.lead_status : "Converted to Lead",
+                phone_number: fullPhoneNumber,
+                test_type: formData.test_type === 'other' ? formData.other_test_type : formData.test_type,
             };
 
             if (isEditMode) {
@@ -307,6 +336,26 @@ const AddLeadScreen = ({ navigation, route }) => {
                         onChange={(v) => handleInputChange('counselor_id', v)}
                         placeholder="Select Counselor"
                     />
+
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Date of Inquiry</Text>
+                        <TouchableOpacity style={styles.datePickerBtn} onPress={() => setShowInquiryDatePicker(true)}>
+                            <Text style={styles.datePickerText}>{formData.date_of_inquiry.toDateString()}</Text>
+                            <Ionicons name="calendar-outline" size={20} color={colors.primary} />
+                        </TouchableOpacity>
+                    </View>
+
+                    {showInquiryDatePicker && (
+                        <DateTimePicker
+                            value={formData.date_of_inquiry}
+                            mode="date"
+                            display="default"
+                            onChange={(event, date) => {
+                                setShowInquiryDatePicker(false);
+                                if (date) handleInputChange('date_of_inquiry', date);
+                            }}
+                        />
+                    )}
                 </View>
 
                 {/* Section 2: Personal Information */}
@@ -323,7 +372,47 @@ const AddLeadScreen = ({ navigation, route }) => {
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Phone Number *</Text>
-                        <TextInput style={styles.input} value={formData.phone_number} onChangeText={(v) => handleInputChange('phone_number', v)} placeholder="+88017..." keyboardType="phone-pad" />
+                        <View style={styles.phoneRow}>
+                            <TouchableOpacity
+                                style={styles.countryCodeButton}
+                                onPress={() => setShowCountryCodePicker(!showCountryCodePicker)}
+                            >
+                                <Text style={styles.countryCodeText}>
+                                    {COUNTRY_CODES.find(c => c.code === formData.country_code)?.flag || ''} {formData.country_code}
+                                </Text>
+                                <Ionicons name="chevron-down" size={16} color={colors.textSecondary} />
+                            </TouchableOpacity>
+                            <TextInput
+                                style={styles.phoneInput}
+                                value={formData.phone_number}
+                                onChangeText={(v) => handleInputChange('phone_number', v)}
+                                placeholder="Phone number"
+                                keyboardType="phone-pad"
+                            />
+                        </View>
+                        {showCountryCodePicker && (
+                            <View style={styles.countryCodeDropdown}>
+                                <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled>
+                                    {COUNTRY_CODES.map((item) => (
+                                        <TouchableOpacity
+                                            key={item.code}
+                                            style={[
+                                                styles.countryCodeItem,
+                                                formData.country_code === item.code && styles.countryCodeItemActive
+                                            ]}
+                                            onPress={() => {
+                                                handleInputChange('country_code', item.code);
+                                                setShowCountryCodePicker(false);
+                                            }}
+                                        >
+                                            <Text style={styles.countryCodeItemText}>
+                                                {item.flag} {item.code} - {item.country}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        )}
                     </View>
 
                     <View style={styles.inputGroup}>
@@ -423,12 +512,24 @@ const AddLeadScreen = ({ navigation, route }) => {
                         <Text style={styles.sectionTitle}>Academic Background</Text>
                     </View>
 
-                    <FilterDropdown
-                        label="Highest Completed Level"
-                        value={formData.highest_level}
-                        options={EDUCATION_LEVEL_OPTIONS}
-                        onChange={(v) => handleInputChange('highest_level', v)}
-                    />
+                    <View style={styles.row}>
+                        <View style={{ flex: 1, marginRight: 8 }}>
+                            <FilterDropdown
+                                label="Highest Completed Level"
+                                value={formData.highest_level}
+                                options={EDUCATION_LEVEL_OPTIONS}
+                                onChange={(v) => handleInputChange('highest_level', v)}
+                            />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <FilterDropdown
+                                label="Medium of Instruction"
+                                value={formData.medium_of_instruction}
+                                options={MEDIUM_OF_INSTRUCTION_OPTIONS}
+                                onChange={(v) => handleInputChange('medium_of_instruction', v)}
+                            />
+                        </View>
+                    </View>
 
                     {educationLevels.map((edu, index) => (
                         <View key={index} style={styles.eduCard}>
@@ -724,6 +825,57 @@ const styles = StyleSheet.create({
         fontSize: fontSizes.md,
         fontWeight: '700',
         color: colors.white,
+    },
+    // Phone with country code styles
+    phoneRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    countryCodeButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.gray50,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        borderRadius: borderRadius.md,
+        padding: spacing.md,
+        marginRight: spacing.sm,
+        minWidth: 100,
+    },
+    countryCodeText: {
+        fontSize: fontSizes.md,
+        color: colors.text,
+        marginRight: spacing.xs,
+    },
+    phoneInput: {
+        flex: 1,
+        backgroundColor: colors.gray50,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        borderRadius: borderRadius.md,
+        padding: spacing.md,
+        fontSize: fontSizes.md,
+        color: colors.text,
+    },
+    countryCodeDropdown: {
+        backgroundColor: colors.white,
+        borderRadius: borderRadius.md,
+        marginTop: spacing.xs,
+        ...shadows.md,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+    },
+    countryCodeItem: {
+        padding: spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.gray100,
+    },
+    countryCodeItemActive: {
+        backgroundColor: `${colors.primary}15`,
+    },
+    countryCodeItemText: {
+        fontSize: fontSizes.sm,
+        color: colors.text,
     },
 });
 

@@ -25,6 +25,7 @@ const MoreScreen = ({ navigation }) => {
         {
             title: 'Application',
             items: [
+                { icon: 'school', label: 'Apply for Admission', screen: 'AdmissionWizard', color: colors.info },
                 { icon: 'airplane', label: 'Visa Processing', screen: 'VisaProcessing', color: colors.primary },
                 { icon: 'card', label: 'Payments', screen: 'Payments', color: colors.success },
                 { icon: 'checkbox', label: 'My Tasks', screen: 'Tasks', color: colors.warning },
@@ -33,7 +34,7 @@ const MoreScreen = ({ navigation }) => {
         {
             title: 'Support',
             items: [
-                { icon: 'chatbubbles', label: 'Chat with Counselor', screen: 'Chat', color: colors.info },
+                { icon: 'chatbubbles', label: 'Chat with Counselor', screen: 'ChatList', color: colors.info },
             ],
         },
         {

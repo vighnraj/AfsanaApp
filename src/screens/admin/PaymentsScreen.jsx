@@ -26,6 +26,7 @@ import { showToast } from '../../components/common/Toast';
 import { formatDateReadable, formatCurrency } from '../../utils/formatting';
 import FilterDropdown from '../../components/common/FilterDropdown';
 import { BOTTOM_TAB_SPACING, BOTTOM_TAB_HEIGHT } from '../../utils/constants';
+import { validateWithToast } from '../../utils/validation';
 
 const PAYMENT_STATUS_OPTIONS = ['Pending', 'Paid', 'Overdue', 'Cancelled'];
 const PAYMENT_TYPE_OPTIONS = ['Tuition', 'Application Fee', 'Visa Fee', 'Other'];
@@ -34,6 +35,40 @@ const PaymentsScreen = ({ navigation }) => {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(true);
+
+    // Calculate analytics
+    const analytics = React.useMemo(() => {
+        const totalPayments = payments.length;
+        const paidPayments = payments.filter(p => String(p.status || '').toLowerCase() === 'paid');
+        const pendingPayments = payments.filter(p => String(p.status || '').toLowerCase() === 'pending');
+        const overduePayments = payments.filter(p => String(p.status || '').toLowerCase() === 'overdue');
+
+        const totalCollected = paidPayments.reduce((sum, p) => sum + (parseFloat(p.amount || p.total_amount) || 0), 0);
+        const totalPending = pendingPayments.reduce((sum, p) => sum + (parseFloat(p.amount || p.total_amount) || 0), 0);
+        const totalOverdue = overduePayments.reduce((sum, p) => sum + (parseFloat(p.amount || p.total_amount) || 0), 0);
+        const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.amount || p.total_amount) || 0), 0);
+
+        // Payment types breakdown
+        const byType = {};
+        payments.forEach(p => {
+            const type = p.payment_type || 'Other';
+            byType[type] = (byType[type] || 0) + (parseFloat(p.amount || p.total_amount) || 0);
+        });
+
+        return {
+            totalPayments,
+            paidCount: paidPayments.length,
+            pendingCount: pendingPayments.length,
+            overdueCount: overduePayments.length,
+            totalCollected,
+            totalPending,
+            totalOverdue,
+            totalAmount,
+            collectionRate: totalAmount > 0 ? ((totalCollected / totalAmount) * 100).toFixed(1) : 0,
+            byType,
+        };
+    }, [payments]);
 
     // Modal State
     const [modalVisible, setModalVisible] = useState(false);
@@ -132,8 +167,8 @@ const PaymentsScreen = ({ navigation }) => {
     };
 
     const handleSubmit = async () => {
-        if (!formData.student_name || !formData.amount) {
-            showToast.error('Error', 'Student name and amount are required');
+        // Validate using schema
+        if (!validateWithToast('payment', formData, showToast)) {
             return;
         }
 
@@ -245,6 +280,79 @@ const PaymentsScreen = ({ navigation }) => {
         );
     }
 
+    // Render analytics section
+    const renderAnalyticsHeader = () => (
+        <View style={styles.analyticsContainer}>
+            {/* Toggle Button */}
+            <TouchableOpacity
+                style={styles.analyticsToggle}
+                onPress={() => setShowAnalytics(!showAnalytics)}
+            >
+                <View style={styles.analyticsToggleLeft}>
+                    <Ionicons name="analytics" size={20} color={colors.primary} />
+                    <Text style={styles.analyticsToggleText}>Payment Analytics</Text>
+                </View>
+                <Ionicons name={showAnalytics ? 'chevron-up' : 'chevron-down'} size={20} color={colors.primary} />
+            </TouchableOpacity>
+
+            {showAnalytics && (
+                <>
+                    {/* Summary Cards */}
+                    <View style={styles.summaryRow}>
+                        <View style={[styles.summaryCard, { backgroundColor: colors.primary }]}>
+                            <Text style={styles.summaryValue}>{formatCurrency(analytics.totalCollected)}</Text>
+                            <Text style={styles.summaryLabel}>Collected</Text>
+                            <View style={styles.summaryBadge}>
+                                <Text style={styles.summaryBadgeText}>{analytics.paidCount} paid</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.summaryCard, { backgroundColor: colors.warning }]}>
+                            <Text style={styles.summaryValue}>{formatCurrency(analytics.totalPending)}</Text>
+                            <Text style={styles.summaryLabel}>Pending</Text>
+                            <View style={styles.summaryBadge}>
+                                <Text style={styles.summaryBadgeText}>{analytics.pendingCount} pending</Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={styles.summaryRow}>
+                        <View style={[styles.summaryCard, { backgroundColor: colors.error }]}>
+                            <Text style={styles.summaryValue}>{formatCurrency(analytics.totalOverdue)}</Text>
+                            <Text style={styles.summaryLabel}>Overdue</Text>
+                            <View style={styles.summaryBadge}>
+                                <Text style={styles.summaryBadgeText}>{analytics.overdueCount} overdue</Text>
+                            </View>
+                        </View>
+                        <View style={[styles.summaryCard, { backgroundColor: colors.success }]}>
+                            <Text style={styles.summaryValue}>{analytics.collectionRate}%</Text>
+                            <Text style={styles.summaryLabel}>Collection Rate</Text>
+                            <View style={styles.summaryBadge}>
+                                <Text style={styles.summaryBadgeText}>{analytics.totalPayments} total</Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Payment Types Breakdown */}
+                    <View style={[styles.breakdownCard, shadows.sm]}>
+                        <Text style={styles.breakdownTitle}>Payment Types Breakdown</Text>
+                        {Object.entries(analytics.byType).map(([type, amount], index) => (
+                            <View key={type} style={styles.breakdownRow}>
+                                <View style={styles.breakdownLeft}>
+                                    <View style={[styles.breakdownDot, { backgroundColor: [colors.primary, colors.success, colors.warning, colors.info][index % 4] }]} />
+                                    <Text style={styles.breakdownType}>{type}</Text>
+                                </View>
+                                <Text style={styles.breakdownAmount}>{formatCurrency(amount)}</Text>
+                            </View>
+                        ))}
+                        {Object.keys(analytics.byType).length === 0 && (
+                            <Text style={styles.noDataText}>No payment data available</Text>
+                        )}
+                    </View>
+                </>
+            )}
+        </View>
+    );
+
     return (
         <SafeAreaView style={styles.safeArea} edges={['bottom']}>
             <FlatList
@@ -253,6 +361,7 @@ const PaymentsScreen = ({ navigation }) => {
                 renderItem={renderPaymentItem}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
+                ListHeaderComponent={renderAnalyticsHeader}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -568,6 +677,107 @@ const styles = StyleSheet.create({
     },
     disabledBtn: {
         opacity: 0.7,
+    },
+    // Analytics Styles
+    analyticsContainer: {
+        marginBottom: spacing.md,
+    },
+    analyticsToggle: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: colors.white,
+        padding: spacing.md,
+        borderRadius: borderRadius.lg,
+        marginBottom: spacing.sm,
+        ...shadows.sm,
+    },
+    analyticsToggleLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    analyticsToggleText: {
+        fontSize: fontSizes.md,
+        fontWeight: '700',
+        color: colors.text,
+        marginLeft: spacing.sm,
+    },
+    summaryRow: {
+        flexDirection: 'row',
+        gap: spacing.sm,
+        marginBottom: spacing.sm,
+    },
+    summaryCard: {
+        flex: 1,
+        padding: spacing.md,
+        borderRadius: borderRadius.lg,
+    },
+    summaryValue: {
+        fontSize: fontSizes.lg,
+        fontWeight: '800',
+        color: colors.white,
+    },
+    summaryLabel: {
+        fontSize: fontSizes.xs,
+        color: 'rgba(255,255,255,0.8)',
+        marginTop: 2,
+    },
+    summaryBadge: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+        alignSelf: 'flex-start',
+        marginTop: spacing.xs,
+    },
+    summaryBadgeText: {
+        fontSize: 10,
+        color: colors.white,
+        fontWeight: '600',
+    },
+    breakdownCard: {
+        backgroundColor: colors.white,
+        padding: spacing.md,
+        borderRadius: borderRadius.lg,
+    },
+    breakdownTitle: {
+        fontSize: fontSizes.sm,
+        fontWeight: '700',
+        color: colors.text,
+        marginBottom: spacing.sm,
+    },
+    breakdownRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: spacing.xs,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.gray100,
+    },
+    breakdownLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    breakdownDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginRight: spacing.sm,
+    },
+    breakdownType: {
+        fontSize: fontSizes.sm,
+        color: colors.text,
+    },
+    breakdownAmount: {
+        fontSize: fontSizes.sm,
+        fontWeight: '600',
+        color: colors.text,
+    },
+    noDataText: {
+        fontSize: fontSizes.sm,
+        color: colors.textSecondary,
+        textAlign: 'center',
+        paddingVertical: spacing.md,
     },
 });
 

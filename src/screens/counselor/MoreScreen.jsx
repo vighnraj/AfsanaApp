@@ -29,6 +29,12 @@ const MoreScreen = ({ navigation }) => {
                     </View>
                 </View>
 
+                <TouchableOpacity style={[styles.menuItem, shadows.sm]} onPress={() => navigation.navigate('ChatList')}>
+                    <Ionicons name="chatbubbles" size={20} color={colors.info} />
+                    <Text style={styles.menuLabel}>Messages</Text>
+                    <Ionicons name="chevron-forward" size={20} color={colors.gray400} />
+                </TouchableOpacity>
+
                 <TouchableOpacity style={[styles.menuItem, shadows.sm]} onPress={() => navigation.navigate('Payments')}>
                     <Ionicons name="card" size={20} color={colors.success} />
                     <Text style={styles.menuLabel}>Student Invoices</Text>
